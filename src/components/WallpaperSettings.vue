@@ -1,42 +1,44 @@
 <template>
   <div class="wallpaper-settings">
-    <!-- 默认壁纸模块 -->
-    <div class="section-title">默认壁纸</div>
-    <div class="default-wallpapers">
-      <div class="wallpaper-grid">
-        <div v-for="(wallpaper, index) in defaultWallpapers" :key="index" class="wallpaper-thumbnail"
-          :class="{ active: settingsStore.backgroundType === BackgroundType.Custom && settingsStore.customWallpaper === wallpaper }"
-          @click="selectCustomWallpaper(wallpaper)">
-          <img :src="wallpaper" :alt="'壁纸 ' + (index + 1)" />
-          <div class="wallpaper-overlay">
-            <span class="wallpaper-number">{{ index + 1 }}</span>
+    <div class="settings-scroll-container">
+      <!-- 默认壁纸模块 -->
+      <div class="section-title">默认壁纸</div>
+      <div class="default-wallpapers">
+        <div class="wallpaper-grid">
+          <div v-for="(wallpaper, index) in defaultWallpapers" :key="index" class="wallpaper-thumbnail"
+            :class="{ active: settingsStore.backgroundType === BackgroundType.Custom && settingsStore.customWallpaper === wallpaper }"
+            @click="selectCustomWallpaper(wallpaper)">
+            <img :src="wallpaper" :alt="'壁纸 ' + (index + 1)" />
+            <div class="wallpaper-overlay">
+              <span class="wallpaper-number">{{ index + 1 }}</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- 在线壁纸模块 -->
-    <div class="section-title">在线壁纸</div>
-    <div class="wallpaper-list">
-      <div class="wallpaper-item" :class="{ active: settingsStore.backgroundType === BackgroundType.Daily }"
-        @click="selectWallpaper(BackgroundType.Daily)">
-        <div class="wallpaper-preview daily-preview">
-          <span class="preview-text">每日壁纸</span>
+      <!-- 在线壁纸模块 -->
+      <div class="section-title">在线壁纸</div>
+      <div class="wallpaper-list">
+        <div class="wallpaper-item" :class="{ active: settingsStore.backgroundType === BackgroundType.Daily }"
+          @click="selectWallpaper(BackgroundType.Daily)">
+          <div class="wallpaper-preview daily-preview">
+            <span class="preview-text">每日壁纸</span>
+          </div>
+          <div class="wallpaper-info">
+            <span class="wallpaper-name">每日壁纸</span>
+            <span class="wallpaper-desc">每天自动更新必应壁纸</span>
+          </div>
         </div>
-        <div class="wallpaper-info">
-          <span class="wallpaper-name">每日壁纸</span>
-          <span class="wallpaper-desc">每天自动更新必应壁纸</span>
-        </div>
-      </div>
 
-      <div class="wallpaper-item" :class="{ active: settingsStore.backgroundType === BackgroundType.Random }"
-        @click="selectWallpaper(BackgroundType.Random)">
-        <div class="wallpaper-preview random-preview">
-          <span class="preview-text">随机壁纸</span>
-        </div>
-        <div class="wallpaper-info">
-          <span class="wallpaper-name">随机壁纸</span>
-          <span class="wallpaper-desc">随机展示所有必应壁纸</span>
+        <div class="wallpaper-item" :class="{ active: settingsStore.backgroundType === BackgroundType.Random }"
+          @click="selectWallpaper(BackgroundType.Random)">
+          <div class="wallpaper-preview random-preview">
+            <span class="preview-text">随机壁纸</span>
+          </div>
+          <div class="wallpaper-info">
+            <span class="wallpaper-name">随机壁纸</span>
+            <span class="wallpaper-desc">随机展示所有必应壁纸</span>
+          </div>
         </div>
       </div>
     </div>
@@ -107,9 +109,15 @@ onMounted(() => {
 
 <style scoped>
 .wallpaper-settings {
-  padding: 0;
-  max-height: 500px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.settings-scroll-container {
+  flex: 1;
   overflow-y: auto;
+  padding: 0;
 }
 
 .section-title {
@@ -241,5 +249,27 @@ onMounted(() => {
   color: #666;
 }
 
-/* 滚动条样式已由全局样式统一管理 */
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .wallpaper-grid {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 8px;
+  }
+
+  .wallpaper-item {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .wallpaper-preview {
+    width: 60px;
+    height: 45px;
+  }
+}
+
+@media (max-width: 480px) {
+  .wallpaper-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
 </style>

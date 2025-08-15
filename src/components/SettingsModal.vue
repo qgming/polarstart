@@ -91,7 +91,6 @@ const close = () => {
 
 .settings-modal {
   width: 700px;
-  height: 500px;
   background-color: rgba(255, 255, 255, 0.95);
   border-radius: 12px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
@@ -117,10 +116,6 @@ const close = () => {
   font-size: 18px;
   font-weight: 600;
   color: #333;
-}
-
-.settings-menu {
-  padding: 10px 0;
 }
 
 .menu-item {
@@ -196,9 +191,10 @@ const close = () => {
 }
 
 .content-body {
-  flex: 1;
+  height: 450px;
   padding: 15px;
   overflow-y: auto;
+  box-sizing: border-box;
 }
 
 /* 动画 */
@@ -226,10 +222,23 @@ const close = () => {
 
 /* 响应式设计 */
 @media (max-width: 768px) {
+  .settings-modal-overlay {
+    padding: 10px;
+  }
+
+  .settings-modal-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   .settings-modal {
-    width: 90%;
-    height: 80%;
+    width: 100%;
+    max-width: 400px;
     flex-direction: column;
+    margin: auto;
   }
 
   .settings-sidebar {
@@ -237,12 +246,12 @@ const close = () => {
     height: auto;
     border-right: none;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 15px 0 0 0;
   }
 
   .settings-menu {
     display: flex;
     overflow-x: auto;
-    padding: 10px;
   }
 
   .menu-item {
@@ -254,6 +263,24 @@ const close = () => {
   .menu-item.active {
     border-right: none;
     border-bottom: 3px solid #2563eb;
+  }
+
+  .content-body {
+    height: calc(100vh - 180px);
+    max-height: 500px;
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .settings-modal {
+    max-width: 95%;
+    height: 600px;
+  }
+
+  .content-body {
+    height: calc(100vh - 160px);
+    max-height: 450px;
   }
 }
 </style>

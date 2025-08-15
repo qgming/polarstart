@@ -40,7 +40,7 @@ const closeSettings = () => {
     <!-- 外层容器控制位置 -->
     <div class="search-wrapper">
       <!-- 使用液态玻璃组件包装搜索输入框 -->
-      <LiquidGlass width="600px" height="50px" border-radius="50px">
+      <LiquidGlass width="100%" height="50px" border-radius="50px">
         <input v-model="searchQuery" type="text" placeholder="" @keyup.enter="handleSearch" class="search-input" />
       </LiquidGlass>
     </div>
@@ -68,6 +68,22 @@ const closeSettings = () => {
   background-position: center center;
   background-size: cover;
   position: relative;
+  overflow: hidden;
+}
+
+/* 确保背景图片始终居中裁剪 */
+.home-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: inherit;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  z-index: -1;
 }
 
 /* 搜索容器定位样式 */
@@ -76,6 +92,8 @@ const closeSettings = () => {
   left: 50%;
   top: 40%;
   transform: translateX(-50%);
+  width: 90%;
+  max-width: 600px;
 }
 
 /* 搜索输入框样式 */
@@ -88,6 +106,18 @@ const closeSettings = () => {
   color: white;
   outline: none;
   text-align: center;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .search-wrapper {
+    width: 80%;
+    max-width: 400px;
+  }
+
+  .search-input {
+    font-size: 16px;
+  }
 }
 
 .search-input::placeholder {
