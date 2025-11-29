@@ -1,44 +1,42 @@
 <template>
   <div class="wallpaper-settings">
-    <div class="settings-scroll-container">
-      <!-- 默认壁纸模块 -->
-      <div class="section-title">默认壁纸</div>
-      <div class="default-wallpapers">
-        <div class="wallpaper-grid">
-          <div v-for="(wallpaper, index) in defaultWallpapers" :key="index" class="wallpaper-thumbnail"
-            :class="{ active: settingsStore.backgroundType === BackgroundType.Custom && settingsStore.customWallpaper === wallpaper }"
-            @click="selectCustomWallpaper(wallpaper)">
-            <img :src="wallpaper" :alt="'壁纸 ' + (index + 1)" />
-            <div class="wallpaper-overlay">
-              <span class="wallpaper-number">{{ index + 1 }}</span>
-            </div>
+    <!-- 默认壁纸模块 -->
+    <div class="section-title">默认壁纸</div>
+    <div class="default-wallpapers">
+      <div class="wallpaper-grid">
+        <div v-for="(wallpaper, index) in defaultWallpapers" :key="index" class="wallpaper-thumbnail"
+          :class="{ active: settingsStore.backgroundType === BackgroundType.Custom && settingsStore.customWallpaper === wallpaper }"
+          @click="selectCustomWallpaper(wallpaper)">
+          <img :src="wallpaper" :alt="'壁纸 ' + (index + 1)" />
+          <div class="wallpaper-overlay">
+            <span class="wallpaper-number">{{ index + 1 }}</span>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- 在线壁纸模块 -->
-      <div class="section-title">在线壁纸</div>
-      <div class="wallpaper-list">
-        <div class="wallpaper-item" :class="{ active: settingsStore.backgroundType === BackgroundType.Daily }"
-          @click="selectWallpaper(BackgroundType.Daily)">
-          <div class="wallpaper-preview daily-preview">
-            <span class="preview-text">每日壁纸</span>
-          </div>
-          <div class="wallpaper-info">
-            <span class="wallpaper-name">每日壁纸</span>
-            <span class="wallpaper-desc">每天自动更新必应壁纸</span>
-          </div>
+    <!-- 在线壁纸模块 -->
+    <div class="section-title">在线壁纸</div>
+    <div class="wallpaper-list">
+      <div class="wallpaper-item" :class="{ active: settingsStore.backgroundType === BackgroundType.Daily }"
+        @click="selectWallpaper(BackgroundType.Daily)">
+        <div class="wallpaper-preview daily-preview">
+          <span class="preview-text">每日壁纸</span>
         </div>
+        <div class="wallpaper-info">
+          <span class="wallpaper-name">每日壁纸</span>
+          <span class="wallpaper-desc">每天自动更新必应壁纸</span>
+        </div>
+      </div>
 
-        <div class="wallpaper-item" :class="{ active: settingsStore.backgroundType === BackgroundType.Random }"
-          @click="selectWallpaper(BackgroundType.Random)">
-          <div class="wallpaper-preview random-preview">
-            <span class="preview-text">随机壁纸</span>
-          </div>
-          <div class="wallpaper-info">
-            <span class="wallpaper-name">随机壁纸</span>
-            <span class="wallpaper-desc">随机展示所有必应壁纸</span>
-          </div>
+      <div class="wallpaper-item" :class="{ active: settingsStore.backgroundType === BackgroundType.Random }"
+        @click="selectWallpaper(BackgroundType.Random)">
+        <div class="wallpaper-preview random-preview">
+          <span class="preview-text">随机壁纸</span>
+        </div>
+        <div class="wallpaper-info">
+          <span class="wallpaper-name">随机壁纸</span>
+          <span class="wallpaper-desc">随机展示所有必应壁纸</span>
         </div>
       </div>
     </div>
@@ -109,31 +107,26 @@ onMounted(() => {
 
 <style scoped>
 .wallpaper-settings {
-  height: 100%;
   display: flex;
   flex-direction: column;
-}
-
-.settings-scroll-container {
-  flex: 1;
-  overflow-y: auto;
-  padding: 0;
+  gap: 24px;
 }
 
 .section-title {
   font-size: 14px;
   font-weight: 600;
-  color: #333;
-  margin: 16px 0 12px 0;
-  padding-left: 4px;
-}
-
-.section-title:first-child {
-  margin-top: 0;
+  color: #555;
+  margin: 0 0 12px 0;
+  padding-left: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
 }
 
 .default-wallpapers {
-  margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .wallpaper-grid {
@@ -145,21 +138,25 @@ onMounted(() => {
 .wallpaper-thumbnail {
   position: relative;
   aspect-ratio: 16/9;
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
   cursor: pointer;
-  transition: all 0.2s;
-  border: 2px solid transparent;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .wallpaper-thumbnail:hover {
-  border-color: rgba(59, 130, 246, 0.6);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-color: rgba(59, 130, 246, 0.5);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.2);
 }
 
 .wallpaper-thumbnail.active {
   border-color: rgba(59, 130, 246, 0.8);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2),
+    0 8px 20px rgba(59, 130, 246, 0.3);
+  transform: scale(1.05);
 }
 
 .wallpaper-thumbnail img {
@@ -170,14 +167,17 @@ onMounted(() => {
 
 .wallpaper-overlay {
   position: absolute;
-  top: 4px;
-  right: 4px;
-  background: rgba(0, 0, 0, 0.5);
+  top: 6px;
+  right: 6px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
   color: white;
-  padding: 2px 6px;
-  border-radius: 4px;
+  padding: 4px 8px;
+  border-radius: 6px;
   font-size: 10px;
-  font-weight: 500;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 .wallpaper-list {
@@ -191,32 +191,62 @@ onMounted(() => {
   align-items: center;
   gap: 16px;
   padding: 16px;
-  border-radius: 12px;
+  border-radius: 14px;
   cursor: pointer;
-  transition: all 0.2s;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  background-color: rgba(255, 255, 255, 0.5);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.5) 0%,
+      rgba(255, 255, 255, 0.3) 100%);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .wallpaper-item:hover {
-  background-color: rgba(255, 255, 255, 0.8);
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.6) 0%,
+      rgba(255, 255, 255, 0.4) 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .wallpaper-item.active {
-  background-color: rgba(59, 130, 246, 0.2);
-  border-color: rgba(59, 130, 246, 0.5);
+  background: linear-gradient(135deg,
+      rgba(59, 130, 246, 0.25) 0%,
+      rgba(139, 92, 246, 0.25) 100%);
+  border-color: rgba(59, 130, 246, 0.4);
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.2),
+    0 0 1px rgba(255, 255, 255, 0.5) inset;
 }
 
 .wallpaper-preview {
-  width: 70px;
-  height: 60px;
-  border-radius: 8px;
+  width: 80px;
+  height: 64px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
-  font-weight: 500;
+  font-size: 13px;
+  font-weight: 600;
   color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.wallpaper-preview::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: inherit;
+  filter: brightness(1.1);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.wallpaper-item:hover .wallpaper-preview::before {
+  opacity: 1;
 }
 
 .daily-preview {
@@ -228,25 +258,29 @@ onMounted(() => {
 }
 
 .preview-text {
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 1;
 }
 
 .wallpaper-info {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
 .wallpaper-name {
   font-size: 16px;
-  font-weight: 500;
-  color: #333;
+  font-weight: 600;
+  color: #1a1a1a;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
 }
 
 .wallpaper-desc {
-  font-size: 12px;
+  font-size: 13px;
   color: #666;
+  line-height: 1.4;
 }
 
 /* 响应式设计 */

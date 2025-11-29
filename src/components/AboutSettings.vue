@@ -4,7 +4,7 @@
       <div class="logo-section">
         <div class="logo-icon">❄️</div>
         <h2>极点起始页</h2>
-        <span class="version-badge">v0.9.0</span>
+        <span class="version-badge">v1.0.0</span>
       </div>
     </div>
 
@@ -45,11 +45,11 @@
           </div>
           <div class="info-item">
             <span class="info-label">当前版本：</span>
-            <span class="info-value">0.9.0 Beta</span>
+            <span class="info-value">1.0.0</span>
           </div>
           <div class="info-item">
             <span class="info-label">开发团队：</span>
-            <span class="info-value">极点维度</span>
+            <span class="info-value">qgming</span>
           </div>
           <div class="info-item">
             <span class="info-label">开源协议：</span>
@@ -85,14 +85,22 @@ defineEmits<{
 
 <style scoped>
 .about-settings {
-  padding: 20px;
+  padding: 0;
   max-width: 600px;
   margin: 0 auto;
 }
 
 .about-header {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 32px;
+  padding: 24px 20px;
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.5) 0%,
+      rgba(255, 255, 255, 0.3) 100%);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
 }
 
 .logo-section {
@@ -100,86 +108,121 @@ defineEmits<{
   align-items: center;
   justify-content: center;
   gap: 12px;
+  flex-wrap: wrap;
 }
 
 .logo-icon {
-  font-size: 32px;
+  font-size: 40px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
 .logo-section h2 {
   margin: 0;
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 700;
   color: #1a1a1a;
+  text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8);
 }
 
 .version-badge {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  padding: 4px 12px;
+  padding: 6px 14px;
   border-radius: 20px;
   font-size: 12px;
   font-weight: 600;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .about-content {
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 24px;
 }
 
 .feature-section h3,
 .info-section h3,
 .open-source-section h3 {
-  margin: 0 0 15px 0;
+  margin: 0 0 16px 0;
   font-size: 18px;
   font-weight: 600;
-  color: #333;
+  color: #1a1a1a;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
 }
 
 .feature-list {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 12px;
 }
 
 .feature-item {
   display: flex;
-  gap: 15px;
+  gap: 16px;
   align-items: flex-start;
-  padding: 15px;
-  background: rgba(255, 255, 255, 0.5);
-  border-radius: 8px;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 16px;
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.5) 0%,
+      rgba(255, 255, 255, 0.3) 100%);
+  backdrop-filter: blur(10px);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.feature-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.6) 0%,
+      rgba(255, 255, 255, 0.4) 100%);
 }
 
 .feature-icon {
-  font-size: 24px;
+  font-size: 28px;
   flex-shrink: 0;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
 .feature-text strong {
   display: block;
-  margin-bottom: 5px;
-  color: #333;
+  margin-bottom: 6px;
+  color: #1a1a1a;
+  font-size: 15px;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
 }
 
 .feature-text p {
   margin: 0;
   font-size: 14px;
   color: #666;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 .info-grid {
   display: grid;
-  gap: 10px;
+  gap: 0;
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.5) 0%,
+      rgba(255, 255, 255, 0.3) 100%);
+  backdrop-filter: blur(10px);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
 }
 
 .info-item {
   display: flex;
-  padding: 10px 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  transition: background 0.2s;
+}
+
+.info-item:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .info-item:last-child {
@@ -188,18 +231,20 @@ defineEmits<{
 
 .info-label {
   font-weight: 600;
-  color: #333;
+  color: #1a1a1a;
   min-width: 100px;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
 }
 
 .info-value {
-  color: #666;
+  color: #555;
 }
 
 .open-source-desc {
-  margin: 0 0 15px 0;
+  margin: 0 0 16px 0;
   color: #666;
-  line-height: 1.5;
+  line-height: 1.6;
+  text-align: center;
 }
 
 .github-link {
@@ -210,43 +255,67 @@ defineEmits<{
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 12px 24px;
-  background: #24292e;
+  padding: 14px 28px;
+  background: linear-gradient(135deg, #24292e 0%, #1a1e22 100%);
   color: white;
   text-decoration: none;
-  border-radius: 8px;
-  font-weight: 500;
-  transition: all 0.3s ease;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .github-btn:hover {
-  background: #1a1e22;
-  transform: translateY(-1px);
+  background: linear-gradient(135deg, #1a1e22 0%, #0d1117 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
 }
 
 .github-icon {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
 }
 
 /* 响应式设计 */
 @media (max-width: 768px) {
   .about-settings {
-    padding: 15px;
+    padding: 0;
+  }
+
+  .about-header {
+    padding: 20px 16px;
+    margin-bottom: 24px;
   }
 
   .logo-section {
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
+  }
+
+  .logo-icon {
+    font-size: 36px;
   }
 
   .logo-section h2 {
-    font-size: 20px;
+    font-size: 22px;
   }
 
   .feature-item {
     flex-direction: column;
     text-align: center;
+    align-items: center;
+    padding: 14px;
+  }
+
+  .info-label {
+    min-width: 90px;
+    font-size: 14px;
+  }
+
+  .info-value {
+    font-size: 14px;
   }
 }
 </style>

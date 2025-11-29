@@ -143,39 +143,53 @@ const cancelForm = () => {
 <style scoped>
 .search-engine-settings {
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 .settings-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .settings-header h3 {
   margin: 0;
   font-size: 18px;
-  color: #333;
+  font-weight: 600;
+  color: #1a1a1a;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
 }
 
 .add-button {
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 6px 12px;
-  background-color: rgba(59, 130, 246, 0.1);
+  gap: 6px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg,
+      rgba(59, 130, 246, 0.15) 0%,
+      rgba(139, 92, 246, 0.15) 100%);
+  backdrop-filter: blur(10px);
   color: #3b82f6;
   border: 1px solid rgba(59, 130, 246, 0.3);
-  border-radius: 6px;
+  border-radius: 10px;
   cursor: pointer;
   font-size: 14px;
-  transition: all 0.2s;
+  font-weight: 500;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
 }
 
 .add-button:hover {
-  background-color: rgba(59, 130, 246, 0.2);
+  background: linear-gradient(135deg,
+      rgba(59, 130, 246, 0.25) 0%,
+      rgba(139, 92, 246, 0.25) 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
 }
 
 .plus-icon {
@@ -184,46 +198,63 @@ const cancelForm = () => {
 }
 
 .add-engine-form {
-  background-color: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 20px;
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.6) 0%,
+      rgba(255, 255, 255, 0.4) 100%);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
   box-sizing: border-box;
   max-width: 100%;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05),
+    0 0 1px rgba(255, 255, 255, 0.5) inset;
 }
 
 .add-engine-form h4 {
-  margin: 0 0 12px 0;
+  margin: 0 0 16px 0;
   font-size: 16px;
-  color: #333;
+  font-weight: 600;
+  color: #1a1a1a;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
 }
 
 .form-group {
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
   font-size: 14px;
-  color: #555;
-  font-weight: 500;
+  color: #333;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
 }
 
 .form-group input {
   width: 100%;
-  padding: 8px 12px;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  border-radius: 6px;
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 10px;
   font-size: 14px;
-  background-color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
   box-sizing: border-box;
+  color: #1a1a1a;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: rgba(59, 130, 246, 0.5);
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-group input::placeholder {
+  color: rgba(0, 0, 0, 0.4);
 }
 
 .help-text {
@@ -244,46 +275,63 @@ const cancelForm = () => {
 .btn-confirm,
 .btn-edit,
 .btn-delete {
-  padding: 6px 12px;
-  border-radius: 4px;
+  padding: 8px 16px;
+  border-radius: 10px;
   font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
 }
 
 .btn-cancel {
-  background-color: rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.5);
   color: #666;
-  border: 1px solid rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(0, 0, 0, 0.15);
 }
 
 .btn-cancel:hover {
-  background-color: rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 0.7);
+  color: #333;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .btn-confirm {
-  background-color: #3b82f6;
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
   color: white;
-  border: 1px solid #3b82f6;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
 }
 
 .btn-confirm:hover:not(:disabled) {
-  background-color: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
 }
 
 .btn-confirm:disabled {
-  background-color: rgba(59, 130, 246, 0.5);
+  background: rgba(59, 130, 246, 0.4);
   cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .engine-section h4 {
   margin: 0 0 12px 0;
   font-size: 14px;
-  color: #666;
-  font-weight: 500;
+  color: #555;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
 }
 
 .engine-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.engine-section {
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -293,41 +341,58 @@ const cancelForm = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 14px;
-  border-radius: 8px;
-  margin-bottom: 10px;
+  padding: 16px 18px;
+  border-radius: 14px;
+  margin-bottom: 0;
   cursor: pointer;
-  transition: all 0.2s;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  background-color: rgba(255, 255, 255, 0.5);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.5) 0%,
+      rgba(255, 255, 255, 0.3) 100%);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .engine-item:hover {
-  background-color: rgba(255, 255, 255, 0.8);
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.6) 0%,
+      rgba(255, 255, 255, 0.4) 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .engine-item.active {
-  background-color: rgba(59, 130, 246, 0.2);
-  border-color: rgba(59, 130, 246, 0.5);
+  background: linear-gradient(135deg,
+      rgba(59, 130, 246, 0.25) 0%,
+      rgba(139, 92, 246, 0.25) 100%);
+  border-color: rgba(59, 130, 246, 0.4);
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.2),
+    0 0 1px rgba(255, 255, 255, 0.5) inset;
 }
 
 .engine-info {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .engine-name {
   display: block;
   font-size: 16px;
-  font-weight: 500;
-  margin-bottom: 2px;
-  color: #333;
+  font-weight: 600;
+  margin-bottom: 0;
+  color: #1a1a1a;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
 }
 
 .engine-url {
   display: block;
-  font-size: 12px;
+  font-size: 13px;
   color: #666;
   word-break: break-all;
+  line-height: 1.4;
 }
 
 .engine-actions {
@@ -337,48 +402,66 @@ const cancelForm = () => {
 }
 
 .btn-edit {
-  background-color: rgba(245, 158, 11, 0.1);
+  background: rgba(245, 158, 11, 0.15);
+  backdrop-filter: blur(10px);
   color: #f59e0b;
   border: 1px solid rgba(245, 158, 11, 0.3);
+  box-shadow: 0 2px 6px rgba(245, 158, 11, 0.1);
 }
 
 .btn-edit:hover {
-  background-color: rgba(245, 158, 11, 0.2);
+  background: rgba(245, 158, 11, 0.25);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
 }
 
 .btn-delete {
-  background-color: rgba(239, 68, 68, 0.1);
+  background: rgba(239, 68, 68, 0.15);
+  backdrop-filter: blur(10px);
   color: #ef4444;
   border: 1px solid rgba(239, 68, 68, 0.3);
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.1);
 }
 
 .btn-delete:hover {
-  background-color: rgba(239, 68, 68, 0.2);
+  background: rgba(239, 68, 68, 0.25);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
 }
 
 .empty-custom {
   text-align: center;
-  padding: 40px 20px;
+  padding: 48px 20px;
   color: #666;
 }
 
 .empty-custom p {
-  margin: 0 0 16px 0;
+  margin: 0 0 20px 0;
   font-size: 14px;
+  color: #888;
 }
 
 .add-first-button {
-  background-color: rgba(59, 130, 246, 0.1);
+  background: linear-gradient(135deg,
+      rgba(59, 130, 246, 0.15) 0%,
+      rgba(139, 92, 246, 0.15) 100%);
+  backdrop-filter: blur(10px);
   color: #3b82f6;
   border: 1px solid rgba(59, 130, 246, 0.3);
-  border-radius: 6px;
-  padding: 8px 16px;
+  border-radius: 12px;
+  padding: 12px 24px;
   cursor: pointer;
   font-size: 14px;
-  transition: all 0.2s;
+  font-weight: 500;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
 }
 
 .add-first-button:hover {
-  background-color: rgba(59, 130, 246, 0.2);
+  background: linear-gradient(135deg,
+      rgba(59, 130, 246, 0.25) 0%,
+      rgba(139, 92, 246, 0.25) 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
 }
 </style>

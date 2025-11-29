@@ -77,7 +77,8 @@ const close = () => {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -91,9 +92,14 @@ const close = () => {
 
 .settings-modal {
   width: 700px;
-  background-color: rgba(255, 255, 255, 0.95);
-  border-radius: 12px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.9) 0%,
+      rgba(255, 255, 255, 0.8) 100%);
+  backdrop-filter: blur(20px) saturate(180%);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1),
+    0 0 1px rgba(255, 255, 255, 0.5) inset;
   display: flex;
   overflow: hidden;
 }
@@ -101,21 +107,25 @@ const close = () => {
 /* 左侧边栏样式 */
 .settings-sidebar {
   width: 200px;
-  background-color: rgba(0, 0, 0, 0.05);
-  border-right: 1px solid rgba(0, 0, 0, 0.1);
+  background: linear-gradient(180deg,
+      rgba(255, 255, 255, 0.3) 0%,
+      rgba(255, 255, 255, 0.1) 100%);
+  backdrop-filter: blur(10px);
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
   padding: 15px 0;
 }
 
 .sidebar-header {
   padding: 0 15px 15px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .sidebar-header h3 {
   margin: 0;
   font-size: 18px;
   font-weight: 600;
-  color: #333;
+  color: #1a1a1a;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
 }
 
 .menu-item {
@@ -123,20 +133,42 @@ const close = () => {
   align-items: center;
   gap: 12px;
   padding: 12px 20px;
+  margin: 4px 8px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  color: #666;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: #555;
+  position: relative;
 }
 
 .menu-item:hover {
-  background-color: rgba(0, 0, 0, 0.05);
-  color: #333;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+  color: #1a1a1a;
+  transform: translateX(4px);
 }
 
 .menu-item.active {
-  background-color: rgba(59, 130, 246, 0.1);
+  background: linear-gradient(135deg,
+      rgba(59, 130, 246, 0.2) 0%,
+      rgba(139, 92, 246, 0.2) 100%);
+  backdrop-filter: blur(10px);
   color: #2563eb;
-  border-right: 3px solid #2563eb;
+  border-right: none;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2),
+    0 0 1px rgba(255, 255, 255, 0.5) inset;
+}
+
+.menu-item.active::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  background: linear-gradient(180deg, #3b82f6 0%, #8b5cf6 100%);
+  border-radius: 2px 0 0 2px;
 }
 
 .menu-icon {
@@ -159,40 +191,49 @@ const close = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  background: linear-gradient(180deg,
+      rgba(255, 255, 255, 0.4) 0%,
+      rgba(255, 255, 255, 0.1) 100%);
 }
 
 .content-header h3 {
   margin: 0;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 600;
-  color: #333;
+  color: #1a1a1a;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
 }
 
 .close-btn {
-  background: none;
-  border: none;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   font-size: 24px;
   cursor: pointer;
   color: #666;
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  transition: all 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  line-height: 1;
 }
 
 .close-btn:hover {
-  background-color: rgba(0, 0, 0, 0.1);
-  color: #333;
+  background: rgba(239, 68, 68, 0.15);
+  backdrop-filter: blur(10px);
+  color: #ef4444;
+  transform: rotate(90deg) scale(1.1);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
 }
 
 .content-body {
   height: 450px;
-  padding: 15px;
+  padding: 20px 24px;
   overflow-y: auto;
   box-sizing: border-box;
 }
