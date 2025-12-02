@@ -18,8 +18,8 @@ const clearSearch = () => {
 <template>
   <div class="w-full max-w-[680px]">
     <div
-      class="flex items-center gap-3 h-14 bg-black/50 backdrop-blur-md rounded-2xl border border-white/10 transition-all duration-300 hover:bg-black/60 hover:border-white/15 focus-within:bg-black/70 focus-within:border-white/20"
-      style="padding-left: 1rem; padding-right: 1rem;">
+      class="flex items-center gap-3 h-14 rounded-2xl border border-white/10 transition-all duration-300 hover:border-white/15 focus-within:border-white/20"
+      style="padding-left: 1rem; padding-right: 1rem; background-color: rgba(20, 20, 20, 0.6); backdrop-filter: blur(40px) saturate(200%); -webkit-backdrop-filter: blur(40px) saturate(200%);">
       <!-- 搜索图标 -->
       <Search theme="outline" size="22" :strokeWidth="2.5" class="text-white/70 flex-shrink-0" />
 

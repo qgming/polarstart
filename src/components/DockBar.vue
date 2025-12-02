@@ -36,9 +36,9 @@ const handleDockItemClick = (item: any) => {
   <!-- 底部Dock栏 - iOS风格高斯模糊效果 -->
   <div class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 opacity-0 animate-fade-in" style="animation-delay: 0.3s;">
     <!-- Dock容器 - 使用Tailwind CSS -->
-    <div class="flex items-center gap-4 bg-black/50 backdrop-blur-xl rounded-3xl border border-white/10
-                transition-all duration-300 hover:bg-black/60 hover:border-white/15 shadow-lg hover:shadow-xl"
-      style="padding-left: 1rem; padding-right: 1rem; padding-top: 1rem; padding-bottom: 1rem;">
+    <div class="flex items-center gap-4 rounded-3xl border border-white/10
+                transition-all duration-300 hover:border-white/15 shadow-lg hover:shadow-xl"
+      style="padding-left: 1rem; padding-right: 1rem; padding-top: 1rem; padding-bottom: 1rem; background-color: rgba(20, 20, 20, 0.6); backdrop-filter: blur(40px) saturate(200%); -webkit-backdrop-filter: blur(40px) saturate(200%);">
 
       <!-- 左侧：信息导航 -->
       <div class="flex items-center gap-3">
