@@ -1,62 +1,27 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useSettingsStore, BackgroundType } from '@/stores/settings'
-import LiquidGlass from '@/components/LiquidGlass.vue'
-import SettingsModal from '@/components/SettingsModal.vue'
 
 const searchQuery = ref('')
 const settingsStore = useSettingsStore()
-const showSettingsModal = ref(false)
 
 const backgroundUrl = computed(() => {
-  if (settingsStore.backgroundType === BackgroundType.Daily) {
-    return 'https://bing.ee123.net/img/'
-  } else if (settingsStore.backgroundType === BackgroundType.Random) {
-    return 'https://bing.ee123.net/img/rand'
-  } else if (settingsStore.backgroundType === BackgroundType.Custom) {
-    return settingsStore.customWallpaper
-  }
-  // 默认返回每日壁纸
   return 'https://bing.ee123.net/img/'
 })
 
 const handleSearch = () => {
   if (searchQuery.value.trim()) {
-    window.open(`${settingsStore.searchEngine.url}${encodeURIComponent(searchQuery.value)}`, '_blank')
+    window.open(`https://www.bing.com/search?q=${encodeURIComponent(searchQuery.value)}`, '_blank')
   }
-}
-
-const openSettings = () => {
-  showSettingsModal.value = true
-}
-
-const closeSettings = () => {
-  showSettingsModal.value = false
 }
 </script>
 
 <template>
   <div class="home-container" :style="{ backgroundImage: `url(${backgroundUrl})` }">
-    <!-- 外层容器控制位置 -->
+    <!-- 搜索框 -->
     <div class="search-wrapper">
-      <!-- 使用液态玻璃组件包装搜索输入框 -->
-      <LiquidGlass width="100%" height="50px" border-radius="50px">
-        <input v-model="searchQuery" type="text" placeholder="" @keyup.enter="handleSearch" class="search-input" />
-      </LiquidGlass>
+      <input v-model="searchQuery" type="text" placeholder="搜索..." @keyup.enter="handleSearch" class="search-input" />
     </div>
-
-    <!-- 设置按钮 -->
-    <div class="settings-button-container">
-      <LiquidGlass class="settings-button" width="40px" height="40px" border-radius="12px"
-        background-color="rgba(0, 0, 0, 0.15)" @click="openSettings">
-        <div class="settings-icon">
-          <img src="/icons/setting.png" alt="设置" width="24" height="24" />
-        </div>
-      </LiquidGlass>
-    </div>
-
-    <!-- 新的设置弹窗 -->
-    <SettingsModal :visible="showSettingsModal" @close="closeSettings" />
   </div>
 </template>
 
@@ -121,32 +86,6 @@ const closeSettings = () => {
 }
 
 .search-input::placeholder {
-  color: rgba(0, 0, 0, 0.25);
-}
-
-/* 设置按钮容器样式 */
-.settings-button-container {
-  position: fixed;
-  left: 20px;
-  bottom: 20px;
-  z-index: 1000;
-}
-
-.settings-button {
-  cursor: pointer;
-  transition: transform 0.3s ease;
-}
-
-.settings-button:hover {
-  transform: scale(1.05);
-}
-
-.settings-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  width: 100%;
-  height: 100%;
+  color: rgba(255, 255, 255, 0.7);
 }
 </style>
