@@ -2,6 +2,9 @@
 import { ref, onMounted, computed } from 'vue'
 import { Local as LocationIcon, Search as SearchIcon, Close as CloseIcon } from '@icon-park/vue-next'
 
+// 从环境变量获取高德地图 API Key
+const AMAP_API_KEY = import.meta.env.VITE_AMAP_API_KEY || ''
+
 interface Location {
   name: string
   province: string
@@ -194,6 +197,101 @@ const toggleSearch = () => {
   }
 }
 
+// 使用 OpenStreetMap Nominatim 免费逆地理编码（备用方案）
+const reverseGeocodeWithNominatim = async (latitude: number, longitude: number): Promise<string> => {
+  const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&accept-language=zh-CN`
+  console.log('使用 Nominatim 逆地理编码:', url)
+  
+  const response = await fetch(url, {
+    headers: {
+      'User-Agent': 'PolarStart/1.0'
+    }
+  })
+  
+  if (!response.ok) {
+    throw new Error(`Nominatim 服务请求失败: ${response.status}`)
+  }
+  
+  const data = await response.json()
+  console.log('Nominatim 返回数据:', data)
+  
+  const address = data.address
+  if (!address) {
+    throw new Error('无法解析地址信息')
+  }
+  
+  // 尝试获取城市名称（优先级：city > town > county > state）
+  const cityName = address.city || address.town || address.county || address.state || address.province
+  
+  if (!cityName) {
+    throw new Error('无法获取城市信息')
+  }
+  
+  // 去掉常见的行政区划后缀
+  return cityName.replace(/[市县区省]$/, '')
+}
+
+// 使用 BigDataCloud 免费逆地理编码（备用方案2）
+const reverseGeocodeWithBigDataCloud = async (latitude: number, longitude: number): Promise<string> => {
+  const url = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=zh`
+  console.log('使用 BigDataCloud 逆地理编码:', url)
+  
+  const response = await fetch(url)
+  
+  if (!response.ok) {
+    throw new Error(`BigDataCloud 服务请求失败: ${response.status}`)
+  }
+  
+  const data = await response.json()
+  console.log('BigDataCloud 返回数据:', data)
+  
+  // 尝试获取城市名称
+  const cityName = data.city || data.locality || data.principalSubdivision
+  
+  if (!cityName) {
+    throw new Error('无法获取城市信息')
+  }
+  
+  return cityName.replace(/[市县区省]$/, '')
+}
+
+// 使用高德地图逆地理编码（需要 API Key）
+const reverseGeocodeWithAmap = async (latitude: number, longitude: number): Promise<string> => {
+  if (!AMAP_API_KEY) {
+    throw new Error('高德地图 API Key 未配置')
+  }
+  
+  const url = `https://restapi.amap.com/v3/geocode/regeo?key=${AMAP_API_KEY}&location=${longitude},${latitude}&extensions=base`
+  console.log('使用高德地图逆地理编码:', url)
+  
+  const response = await fetch(url)
+  
+  if (!response.ok) {
+    throw new Error(`高德地图服务请求失败: ${response.status}`)
+  }
+  
+  const data = await response.json()
+  console.log('高德地图返回数据:', data)
+  
+  if (data.status !== '1' || !data.regeocode) {
+    throw new Error(data.info || '定位失败')
+  }
+  
+  const addressComponent = data.regeocode.addressComponent
+  let city = addressComponent.city || addressComponent.province
+  
+  // 处理城市为数组的情况
+  if (Array.isArray(city) && city.length === 0) {
+    city = addressComponent.province
+  }
+  
+  if (!city || city === '[]' || city === '') {
+    throw new Error('无法获取有效的城市信息')
+  }
+  
+  return city.replace(/[市省]$/, '')
+}
+
 // 获取用户位置并获取天气
 const getLocationWeather = async () => {
   if (!navigator.geolocation) {
@@ -216,60 +314,38 @@ const getLocationWeather = async () => {
     const { latitude, longitude } = position.coords
     console.log('获取到的坐标:', { latitude, longitude })
 
-    try {
-      // 使用高德地图逆地理编码服务
-      const url = `https://restapi.amap.com/v3/geocode/regeo?key=d68760589603001a15d1ecac45c2e035&location=${longitude},${latitude}&extensions=base`
-      console.log('请求高德地图 API:', url)
+    let cityName: string | null = null
+    let lastError: Error | null = null
 
-      const response = await fetch(url)
+    // 尝试多种逆地理编码服务（按优先级）
+    const geocodeServices = [
+      { name: '高德地图', fn: () => reverseGeocodeWithAmap(latitude, longitude) },
+      { name: 'BigDataCloud', fn: () => reverseGeocodeWithBigDataCloud(latitude, longitude) },
+      { name: 'OpenStreetMap', fn: () => reverseGeocodeWithNominatim(latitude, longitude) }
+    ]
 
-      console.log('高德地图响应状态:', response.status, response.ok)
-
-      if (!response.ok) {
-        throw new Error(`高德地图服务请求失败: ${response.status}`)
+    for (const service of geocodeServices) {
+      try {
+        console.log(`尝试使用 ${service.name} 进行逆地理编码...`)
+        cityName = await service.fn()
+        console.log(`${service.name} 成功获取城市:`, cityName)
+        break
+      } catch (err) {
+        console.warn(`${service.name} 失败:`, err)
+        lastError = err instanceof Error ? err : new Error(String(err))
+        continue
       }
+    }
 
-      const data = await response.json()
-      console.log('高德地图返回完整数据:', JSON.stringify(data, null, 2))
-
-      if (data.status === '1' && data.regeocode) {
-        const addressComponent = data.regeocode.addressComponent
-        console.log('地址组件:', addressComponent)
-
-        // 优先使用城市名，如果没有则使用省份
-        let city = addressComponent.city || addressComponent.province
-
-        console.log('原始城市名:', city, '类型:', typeof city)
-
-        // 处理城市为数组的情况
-        if (Array.isArray(city) && city.length === 0) {
-          city = addressComponent.province
-          console.log('城市为空数组，使用省份:', city)
-        }
-
-        if (city && city !== '[]' && city !== '') {
-          // 去掉"市"和"省"字后缀
-          const cityName = city.replace(/[市省]$/, '')
-          console.log('处理后的城市名:', cityName)
-
-          // 提示用户定位结果（可能不准确）
-          locationError.value = `已定位到: ${cityName}（如不准确请手动搜索）`
-
-          searchQuery.value = cityName
-          await fetchWeatherData(true, cityName)
-          return
-        } else {
-          console.error('城市信息无效:', city)
-          throw new Error('无法获取有效的城市信息')
-        }
-      } else {
-        console.error('高德地图 API 返回错误:', data)
-        throw new Error(data.info || `定位失败: status=${data.status}`)
-      }
-    } catch (err) {
-      console.error('高德地图服务失败详情:', err)
-      locationError.value = err instanceof Error ? err.message : '无法获取城市信息，请手动输入城市名称'
-      throw err
+    if (cityName) {
+      // 提示用户定位结果（可能不准确）
+      locationError.value = `已定位到: ${cityName}（如不准确请手动搜索）`
+      
+      searchQuery.value = cityName
+      await fetchWeatherData(true, cityName)
+      return
+    } else {
+      throw lastError || new Error('所有逆地理编码服务均失败')
     }
 
   } catch (err) {
