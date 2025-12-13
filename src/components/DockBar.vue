@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import WebsiteIcon from '@/components/WebsiteIcon.vue'
 
 const router = useRouter()
 
@@ -34,63 +35,67 @@ const handleDockItemClick = (item: any) => {
 </script>
 
 <template>
-  <!-- 底部Dock栏 - iOS风格高斯模糊效果 -->
-  <div class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 opacity-0 animate-fade-in" style="animation-delay: 0.3s;">
-    <!-- Dock容器 - 使用Tailwind CSS -->
-    <div class="flex items-center gap-2 rounded-2xl border border-white/10
-                transition-all duration-300 hover:border-white/15 shadow-lg hover:shadow-xl"
-      style="padding-left: 0.625rem; padding-right: 0.625rem; padding-top: 0.625rem; padding-bottom: 0.625rem; background-color: rgba(20, 20, 20, 0.6); backdrop-filter: blur(40px) saturate(200%); -webkit-backdrop-filter: blur(40px) saturate(200%);">
+  <!-- 底部Dock栏 - 现代化高斯模糊设计 -->
+  <div class="dock-wrapper">
+    <!-- Dock容器 -->
+    <div class="dock-container glass-primary will-change-backdrop gpu-accelerate">
 
       <!-- 左侧：信息导航 -->
-      <div class="flex items-center gap-2">
-        <div v-for="(item, index) in leftNavItems" :key="`left-${index}`" class="dock-item group"
-          :style="{ animationDelay: `${0.4 + index * 0.05}s` }" @click="handleDockItemClick(item)">
-          <!-- 白色背景图标 -->
-          <div class="relative w-11 h-11 rounded-lg bg-white/60 backdrop-blur-md border border-white/30
-                      flex items-center justify-center transition-all duration-300 cursor-pointer
-                      group-hover:scale-110 group-hover:bg-white/75 group-hover:border-white/40 group-hover:shadow-xl group-hover:-translate-y-1.5
-                      group-active:scale-105 shadow-md">
-            <span class="text-xl">{{ item.icon }}</span>
+      <div class="dock-section">
+        <div
+          v-for="(item, index) in leftNavItems"
+          :key="`left-${index}`"
+          class="dock-item"
+          :style="{ animationDelay: `${0.4 + index * 0.05}s` }"
+          @click="handleDockItemClick(item)"
+        >
+          <div class="dock-icon-container">
+            <span class="dock-icon">{{ item.icon }}</span>
           </div>
-          <!-- 标签 -->
           <div class="dock-label">{{ item.name }}</div>
         </div>
       </div>
 
       <!-- 分隔线 -->
-      <div class="w-px h-9 bg-white/15 mx-2"></div>
+      <div class="dock-divider"></div>
 
       <!-- 中间：网页导航链接 -->
-      <div class="flex items-center gap-2 px-2">
-        <div v-for="(item, index) in webLinks" :key="`web-${index}`" class="dock-item group"
-          :style="{ animationDelay: `${0.45 + index * 0.05}s` }" @click="handleDockItemClick(item)">
-          <!-- 白色背景图标 -->
-          <div class="relative w-11 h-11 rounded-lg bg-white/60 backdrop-blur-md border border-white/30
-                      flex items-center justify-center transition-all duration-300 cursor-pointer
-                      group-hover:scale-110 group-hover:bg-white/75 group-hover:border-white/40 group-hover:shadow-xl group-hover:-translate-y-1.5
-                      group-active:scale-105 shadow-md">
-            <span class="text-xl">{{ item.icon }}</span>
+      <div class="dock-section dock-section-main">
+        <div
+          v-for="(item, index) in webLinks"
+          :key="`web-${index}`"
+          class="dock-item"
+          :style="{ animationDelay: `${0.45 + index * 0.05}s` }"
+          @click="handleDockItemClick(item)"
+        >
+          <div class="dock-icon-container">
+            <WebsiteIcon
+              :url="item.url"
+              :name="item.name"
+              :fallback-icon="item.icon"
+              :size="40"
+              class="dock-icon-website"
+            />
           </div>
-          <!-- 标签 -->
           <div class="dock-label">{{ item.name }}</div>
         </div>
       </div>
 
       <!-- 分隔线 -->
-      <div class="w-px h-9 bg-white/15 mx-2"></div>
+      <div class="dock-divider"></div>
 
       <!-- 右侧：分类导航 -->
-      <div class="flex items-center gap-2">
-        <div v-for="(item, index) in rightNavItems" :key="`right-${index}`" class="dock-item group"
-          :style="{ animationDelay: `${0.65 + index * 0.05}s` }" @click="handleDockItemClick(item)">
-          <!-- 白色背景图标 -->
-          <div class="relative w-11 h-11 rounded-lg bg-white/60 backdrop-blur-md border border-white/30
-                      flex items-center justify-center transition-all duration-300 cursor-pointer
-                      group-hover:scale-110 group-hover:bg-white/75 group-hover:border-white/40 group-hover:shadow-xl group-hover:-translate-y-1.5
-                      group-active:scale-105 shadow-md">
-            <span class="text-xl">{{ item.icon }}</span>
+      <div class="dock-section">
+        <div
+          v-for="(item, index) in rightNavItems"
+          :key="`right-${index}`"
+          class="dock-item"
+          :style="{ animationDelay: `${0.65 + index * 0.05}s` }"
+          @click="handleDockItemClick(item)"
+        >
+          <div class="dock-icon-container">
+            <span class="dock-icon">{{ item.icon }}</span>
           </div>
-          <!-- 标签 -->
           <div class="dock-label">{{ item.name }}</div>
         </div>
       </div>
@@ -99,76 +104,231 @@ const handleDockItemClick = (item: any) => {
 </template>
 
 <style scoped>
-/* 动画效果 */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* Dock包裹器 */
+.dock-wrapper {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  opacity: 0;
+  animation: dockFadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards;
 }
 
-.animate-fade-in {
-  animation: fadeIn 0.6s ease-out forwards;
+/* Dock容器 */
+.dock-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem;
+  border-radius: 1rem;
+  transition: all var(--duration-smooth) var(--ease-smooth);
 }
 
+.dock-container:hover {
+  border-color: var(--border-glass-strong);
+  box-shadow: var(--shadow-glass-xl);
+  transform: translateY(-2px);
+}
+
+/* Dock分区 */
+.dock-section {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dock-section-main {
+  padding: 0 0.5rem;
+}
+
+/* Dock分隔线 */
+.dock-divider {
+  width: 1px;
+  height: 2.25rem;
+  background: var(--border-glass-medium);
+  margin: 0 0.5rem;
+}
+
+/* Dock项目 */
 .dock-item {
   position: relative;
-  animation: fadeIn 0.5s ease-out backwards;
+  animation: dockItemFadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) backwards;
 }
 
-/* iOS风格标签 */
+/* 图标容器 */
+.dock-icon-container {
+  position: relative;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-glass-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-glass-sm);
+  transition: all var(--duration-normal) var(--ease-spring);
+  overflow: hidden;
+}
+
+/* 悬停光泽效果 */
+.dock-icon-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--gradient-glass);
+  opacity: 0;
+  transition: opacity var(--duration-normal) var(--ease-smooth);
+}
+
+.dock-item:hover .dock-icon-container {
+  transform: translateY(-6px) scale(1.1);
+  background: rgba(255, 255, 255, 0.8);
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: var(--shadow-glass-lg);
+}
+
+.dock-item:hover .dock-icon-container::before {
+  opacity: 1;
+}
+
+.dock-item:active .dock-icon-container {
+  transform: translateY(-4px) scale(1.05);
+}
+
+/* 图标 */
+.dock-icon {
+  font-size: 1.25rem;
+  position: relative;
+  z-index: 1;
+  transition: transform var(--duration-fast) var(--ease-smooth);
+}
+
+.dock-item:hover .dock-icon {
+  transform: scale(1.1);
+}
+
+/* 网站图标样式 */
+.dock-icon-website {
+  position: relative;
+  z-index: 1;
+  transition: transform var(--duration-fast) var(--ease-smooth);
+}
+
+.dock-item:hover .dock-icon-website {
+  transform: scale(1.1);
+}
+
+/* Dock标签 */
 .dock-label {
   position: absolute;
-  bottom: -26px;
+  bottom: -1.75rem;
   left: 50%;
   transform: translateX(-50%) scale(0.85);
   white-space: nowrap;
-  font-size: 10px;
+  font-size: 0.625rem;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.95);
-  background: rgba(0, 0, 0, 0.85);
+  background: rgba(0, 0, 0, 0.9);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  padding: 3px 8px;
-  border-radius: 5px;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
   opacity: 0;
   pointer-events: none;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all var(--duration-normal) var(--ease-spring);
+  box-shadow: var(--shadow-glass-md);
+  border: 1px solid var(--border-glass-subtle);
 }
 
 .dock-item:hover .dock-label {
   opacity: 1;
   transform: translateX(-50%) scale(1);
-  bottom: -28px;
+  bottom: -1.875rem;
+}
+
+/* 动画关键帧 */
+@keyframes dockFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes dockItemFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 /* 响应式设计 */
 @media (max-width: 768px) {
-  .dock-item>div {
-    width: 38px !important;
-    height: 38px !important;
+  .dock-wrapper {
+    bottom: 1rem;
   }
 
-  .dock-item span {
-    font-size: 18px !important;
+  .dock-icon-container {
+    width: 2.375rem;
+    height: 2.375rem;
+    border-radius: 0.625rem;
+  }
+
+  .dock-icon {
+    font-size: 1.125rem;
+  }
+
+  .dock-divider {
+    height: 2rem;
   }
 }
 
 @media (max-width: 640px) {
-  .dock-item>div {
-    width: 34px !important;
-    height: 34px !important;
+  .dock-wrapper {
+    bottom: 0.75rem;
   }
 
-  .dock-item span {
-    font-size: 16px !important;
+  .dock-container {
+    padding: 0.5rem;
+    gap: 0.375rem;
+  }
+
+  .dock-section {
+    gap: 0.375rem;
+  }
+
+  .dock-icon-container {
+    width: 2.125rem;
+    height: 2.125rem;
+    border-radius: 0.5rem;
+  }
+
+  .dock-icon {
+    font-size: 1rem;
+  }
+
+  .dock-divider {
+    height: 1.75rem;
+    margin: 0 0.25rem;
+  }
+
+  .dock-section-main {
+    padding: 0 0.25rem;
   }
 }
 </style>

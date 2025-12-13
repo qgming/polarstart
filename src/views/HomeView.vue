@@ -25,27 +25,135 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="min-h-screen w-full bg-cover bg-center bg-no-repeat relative overflow-hidden"
-    :style="{ backgroundImage: isBackgroundLoaded ? `url(${backgroundUrl})` : 'none', backgroundColor: '#1a1a2e' }">
+  <div class="home-container">
+    <!-- 背景图层 -->
+    <div
+      class="background-layer"
+      :class="{ 'background-loaded': isBackgroundLoaded }"
+      :style="{ backgroundImage: isBackgroundLoaded ? `url(${backgroundUrl})` : 'none' }"
+    ></div>
 
-    <!-- 时间显示 - 顶部 10vh，居中 -->
-    <div class="absolute left-1/2 -translate-x-1/2 z-10" style="top: 10vh;">
-      <TimeDisplay />
+    <!-- 渐变遮罩层 - 增强深度 -->
+    <div class="gradient-overlay"></div>
+
+    <!-- 内容层 -->
+    <div class="content-layer">
+      <!-- 时间显示 - 顶部 10vh，居中 -->
+      <div class="time-container">
+        <TimeDisplay />
+      </div>
+
+      <!-- 搜索栏 - 35vh 处，居中 -->
+      <div class="search-container">
+        <SearchBar />
+      </div>
+
+      <!-- Dock栏组件 -->
+      <DockBar />
     </div>
-
-    <!-- 搜索栏 - 30vh 处，居中 -->
-    <div class="absolute left-0 right-0 z-10 flex justify-center px-4" style="top: 35vh;">
-      <SearchBar />
-    </div>
-
-    <!-- Dock栏组件 -->
-    <DockBar />
   </div>
 </template>
 
 <style scoped>
-/* 背景加载动画 */
-.bg-cover {
-  transition: background-image 0.5s ease-in-out;
+.home-container {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background-color: #0f0f14;
+}
+
+/* 背景图层 */
+.background-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transform: scale(1.05);
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity, transform;
+}
+
+.background-layer.background-loaded {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* 渐变遮罩层 - 创造深度和氛围 */
+.gradient-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.3) 0%,
+    rgba(0, 0, 0, 0.1) 30%,
+    rgba(0, 0, 0, 0.1) 70%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 内容层 */
+.content-layer {
+  position: relative;
+  min-height: 100vh;
+  z-index: 2;
+}
+
+/* 时间容器 */
+.time-container {
+  position: absolute;
+  top: 10vh;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  animation: fadeInDown 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
+}
+
+/* 搜索容器 */
+.search-container {
+  position: absolute;
+  top: 35vh;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  padding: 0 1rem;
+  animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.4s both;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .time-container {
+    top: 8vh;
+  }
+
+  .search-container {
+    top: 30vh;
+  }
+}
+
+@media (max-width: 640px) {
+  .time-container {
+    top: 6vh;
+  }
+
+  .search-container {
+    top: 25vh;
+    padding: 0 0.75rem;
+  }
 }
 </style>

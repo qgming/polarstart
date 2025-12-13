@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import type { Category } from '@/data/webCategories'
+import WebsiteIcon from '@/components/WebsiteIcon.vue'
 
 interface Props {
   category: Category
@@ -55,15 +56,30 @@ if (typeof window !== 'undefined') {
         class="icon-item clickable-icon" :style="{ animationDelay: `${index * 0.05}s` }"
         :aria-label="`打开 ${website.name}`" @click="openWebsite(website.url, $event)">
         <div class="icon-wrapper">
-          {{ website.icon }}
+          <WebsiteIcon
+            :url="website.url"
+            :name="website.name"
+            :fallback-icon="website.icon"
+            :size="56"
+          />
         </div>
       </button>
 
-      <!-- 更多图标区域 - 点击展开 -->
+      <!-- 更多图标区域 - 显示接下来最多4个网站的小图标 -->
       <button class="icon-item more-icon" aria-label="查看更多网站" @click="openModal">
         <div class="icon-wrapper more-wrapper">
-          <div class="more-grid">
-            <div v-for="i in Math.min(9, category.websites.length - 3)" :key="i" class="more-dot">
+          <div class="more-mini-icons-grid">
+            <div
+              v-for="(website, index) in category.websites.slice(3, 7)"
+              :key="website.url"
+              class="more-mini-icon"
+            >
+              <WebsiteIcon
+                :url="website.url"
+                :name="website.name"
+                :fallback-icon="website.icon"
+                :size="18"
+              />
             </div>
           </div>
         </div>
@@ -118,8 +134,13 @@ if (typeof window !== 'undefined') {
 
               <!-- 网站图标 -->
               <div class="relative z-10 transition-all duration-300 group-hover:scale-110 group-hover:-translate-y-0.5"
-                style="font-size: 36px; filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.35));" aria-hidden="true">
-                {{ website.icon }}
+                style="filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.35));" aria-hidden="true">
+                <WebsiteIcon
+                  :url="website.url"
+                  :name="website.name"
+                  :fallback-icon="website.icon"
+                  :size="36"
+                />
               </div>
 
               <!-- 网站名称 -->
@@ -145,7 +166,7 @@ if (typeof window !== 'undefined') {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
 }
@@ -154,33 +175,28 @@ if (typeof window !== 'undefined') {
 .icon-preview-container {
   position: relative;
   width: 100%;
-  max-width: 180px;
+  max-width: 100%;
   aspect-ratio: 1;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(2, 1fr);
-  gap: 8px;
-  padding: 16px;
-  border-radius: 32px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.06) 100%);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.12),
-    0 2px 8px rgba(0, 0, 0, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  gap: 10px;
+  padding: 20px;
+  border-radius: 36px;
+  background: var(--glass-light-primary);
+  backdrop-filter: blur(var(--blur-md)) var(--glass-saturate-mid);
+  -webkit-backdrop-filter: blur(var(--blur-md)) var(--glass-saturate-mid);
+  border: 1px solid var(--border-glass-medium);
+  box-shadow: var(--shadow-glass-md), inset 0 1px 0 rgba(255, 255, 255, 0.15);
   overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all var(--duration-smooth) var(--ease-smooth);
 }
 
 .icon-preview-container:hover {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.08) 100%);
-  border-color: rgba(255, 255, 255, 0.25);
-  box-shadow:
-    0 12px 48px rgba(0, 0, 0, 0.18),
-    0 4px 16px rgba(0, 0, 0, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.16);
+  border-color: var(--border-glass-strong);
+  box-shadow: var(--shadow-glass-lg), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
 }
 
 /* 单个图标项 */
@@ -189,7 +205,7 @@ if (typeof window !== 'undefined') {
   align-items: center;
   justify-content: center;
   border: none;
-  border-radius: 18px;
+  border-radius: 20px;
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -230,8 +246,6 @@ if (typeof window !== 'undefined') {
   justify-content: center;
   width: 100%;
   height: 100%;
-  font-size: clamp(32px, 5vw, 42px);
-  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -260,32 +274,38 @@ if (typeof window !== 'undefined') {
   filter: none;
 }
 
-.more-grid {
+/* 更多区域的小图标网格 - 2x2 布局 */
+.more-mini-icons-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(3, 1fr);
-  gap: 3px;
-  width: 70%;
-  height: 70%;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 4px;
+  width: 80%;
+  height: 80%;
+  padding: 4px;
 }
 
-.more-dot {
-  background: rgba(255, 255, 255, 0.5);
-  border-radius: 50%;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+.more-mini-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  overflow: hidden;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.more-icon:hover .more-dot {
-  background: rgba(255, 255, 255, 0.7);
-  transform: scale(1.15);
+.more-icon:hover .more-mini-icon {
+  background: rgba(255, 255, 255, 0.15);
+  transform: scale(1.05);
 }
 
 /* 类别名称 - 增大字体 */
 .category-name {
   margin: 0;
   padding: 0 8px;
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 700;
   color: rgba(255, 255, 255, 0.95);
   text-align: center;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
@@ -334,30 +354,30 @@ if (typeof window !== 'undefined') {
 
 @media (max-width: 768px) {
   .icon-preview-container {
-    max-width: 150px;
-    border-radius: 28px;
-    padding: 12px;
-    gap: 6px;
+    border-radius: 30px;
+    padding: 16px;
+    gap: 8px;
   }
 
   .icon-item {
-    border-radius: 14px;
-  }
-
-  .icon-wrapper {
-    font-size: clamp(28px, 6vw, 36px);
+    border-radius: 16px;
   }
 
   .category-name {
-    font-size: 14px;
+    font-size: 15px;
   }
 
   .category-library-card {
-    gap: 12px;
+    gap: 10px;
   }
 
-  .more-grid {
-    gap: 2px;
+  .more-mini-icons-grid {
+    gap: 3px;
+    padding: 3px;
+  }
+
+  .more-mini-icon {
+    border-radius: 4px;
   }
 
   /* 模态框内边距调整 */
@@ -385,22 +405,20 @@ if (typeof window !== 'undefined') {
 /* 平板尺寸优化 */
 @media (min-width: 769px) and (max-width: 1024px) {
   .icon-preview-container {
-    max-width: 165px;
-  }
-
-  .icon-wrapper {
-    font-size: clamp(34px, 4.5vw, 40px);
+    border-radius: 34px;
+    padding: 18px;
   }
 }
 
 /* 大屏幕优化 */
 @media (min-width: 1025px) {
   .icon-preview-container {
-    max-width: 200px;
+    padding: 24px;
+    gap: 12px;
   }
 
-  .icon-wrapper {
-    font-size: clamp(38px, 5vw, 46px);
+  .icon-item {
+    border-radius: 22px;
   }
 }
 
