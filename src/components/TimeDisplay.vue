@@ -47,8 +47,12 @@ onUnmounted(() => {
 
 .clock-time {
   margin: 0;
+  font-family: "Cascadia Mono", "SFMono-Regular", "SF Mono", "JetBrains Mono", "IBM Plex Mono", "Roboto Mono", "Consolas", "Liberation Mono", monospace;
   font-size: clamp(64px, 12vw, 120px);
-  font-weight: 700;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1, "zero" 1;
+  letter-spacing: 0.02em;
   line-height: 0.95;
   color: #f7fbff;
   text-shadow: 0 16px 48px rgba(0, 0, 0, 0.28);

@@ -1,22 +1,57 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import DockBar from '@/components/DockBar.vue'
 import SearchBar from '@/components/SearchBar.vue'
 import TimeDisplay from '@/components/TimeDisplay.vue'
 
-const bingWallpaper = 'https://bing.ee123.net/img/'
+const desktopWallpaper = 'https://bing.ee123.net/img/?size=1920x1080&imgtype=webp'
+const mobileWallpaper = 'https://bing.ee123.net/img/?size=768x1280&imgtype=webp'
 const backgroundLoaded = ref(false)
+const backgroundUrl = ref(desktopWallpaper)
+let mobileWallpaperQuery: MediaQueryList | null = null
+let loadToken = 0
 
 const backgroundStyle = computed(() => ({
-  backgroundImage: backgroundLoaded.value ? `url(${bingWallpaper})` : 'none'
+  backgroundImage: backgroundLoaded.value ? `url(${backgroundUrl.value})` : 'none'
 }))
 
-onMounted(() => {
+const getWallpaperUrl = () => {
+  if (typeof window === 'undefined') return desktopWallpaper
+  return window.matchMedia('(max-width: 768px) and (orientation: portrait)').matches
+    ? mobileWallpaper
+    : desktopWallpaper
+}
+
+const loadBackground = () => {
+  const nextBackgroundUrl = getWallpaperUrl()
+
+  if (backgroundLoaded.value && backgroundUrl.value === nextBackgroundUrl) return
+
+  const currentToken = loadToken + 1
+  loadToken = currentToken
+  backgroundLoaded.value = false
+
   const image = new Image()
   image.onload = () => {
+    if (currentToken !== loadToken) return
+    backgroundUrl.value = nextBackgroundUrl
     backgroundLoaded.value = true
   }
-  image.src = bingWallpaper
+  image.onerror = () => {
+    if (currentToken !== loadToken) return
+    backgroundLoaded.value = false
+  }
+  image.src = nextBackgroundUrl
+}
+
+onMounted(() => {
+  mobileWallpaperQuery = window.matchMedia('(max-width: 768px) and (orientation: portrait)')
+  mobileWallpaperQuery.addEventListener('change', loadBackground)
+  loadBackground()
+})
+
+onUnmounted(() => {
+  mobileWallpaperQuery?.removeEventListener('change', loadBackground)
 })
 </script>
 
@@ -28,7 +63,6 @@ onMounted(() => {
 
     <section class="hero-layout">
       <header class="hero-copy">
-        <p class="hero-kicker">PolarStart</p>
         <TimeDisplay />
       </header>
 
@@ -60,6 +94,7 @@ onMounted(() => {
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
+  will-change: opacity, transform;
   opacity: 0;
   transform: scale(1.04);
   transition: opacity 600ms ease, transform 900ms ease;
@@ -90,35 +125,31 @@ onMounted(() => {
   position: relative;
   z-index: 1;
   min-height: 100vh;
-  display: grid;
-  place-items: center;
-  padding: clamp(32px, 8vw, 72px) clamp(20px, 4vw, 48px) 144px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: clamp(64px, 13vh, 124px) clamp(20px, 4vw, 48px) 144px;
 }
 
 .hero-copy {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
   text-align: center;
-}
-
-.hero-kicker {
-  margin: 0;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: rgba(232, 242, 255, 0.72);
 }
 
 .hero-search {
   width: min(100%, 760px);
-  margin-top: 28px;
+  margin-top: clamp(22px, 3vh, 34px);
 }
 
 @media (max-width: 640px) {
+  .home-background {
+    background-position: center top;
+  }
+
   .hero-layout {
+    padding-top: 72px;
     padding-bottom: 132px;
   }
 
