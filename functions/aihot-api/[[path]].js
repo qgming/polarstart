@@ -40,7 +40,7 @@ export async function onRequest(context) {
   }
 
   try {
-    return fetch(createUpstreamUrl(request.url, params?.path), {
+    return await fetch(createUpstreamUrl(request.url, params?.path), {
       method: request.method,
       headers: createProxyHeaders(request),
       redirect: 'follow'
