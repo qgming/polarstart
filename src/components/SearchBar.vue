@@ -57,6 +57,7 @@ const clear = () => {
 
     <button class="submit-button" type="button" aria-label="搜索" :disabled="!canSubmit" @click="submit">
       <Search :size="20" :stroke-width="2.45" />
+      <span class="submit-label">搜索</span>
     </button>
   </div>
 </template>
@@ -66,13 +67,13 @@ const clear = () => {
   display: grid;
   grid-template-columns: auto 1fr auto auto;
   align-items: center;
-  gap: 12px;
-  min-height: 66px;
-  padding: 10px 9px 10px 10px;
-  border-radius: 20px;
-  background: rgba(7, 13, 23, 0.58);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  box-shadow: 0 18px 60px rgba(5, 10, 20, 0.34);
+  gap: 18px;
+  min-height: 76px;
+  padding: 11px 12px 11px 12px;
+  border-radius: 30px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow);
   backdrop-filter: blur(20px);
   transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
 }
@@ -80,9 +81,9 @@ const clear = () => {
 .search-shell:hover,
 .search-shell.focused {
   transform: translateY(-2px);
-  background: rgba(11, 18, 30, 0.62);
-  border-color: rgba(170, 214, 255, 0.28);
-  box-shadow: 0 24px 72px rgba(5, 10, 20, 0.38);
+  background: var(--card-bg-hover);
+  border-color: var(--accent-border);
+  box-shadow: var(--card-shadow-hover);
 }
 
 .search-input {
@@ -91,32 +92,34 @@ const clear = () => {
   border: 0;
   outline: 0;
   background: transparent;
-  color: #f4f8ff;
-  font-size: 16px;
+  color: var(--text-primary);
+  font-size: 18px;
+  font-weight: 500;
   line-height: 1.4;
 }
 
 .search-input::placeholder {
-  color: rgba(232, 242, 255, 0.44);
+  color: var(--text-muted);
 }
 
 .icon-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 10px;
   width: 36px;
   height: 36px;
-  border-radius: 12px;
+  border-radius: 14px;
   border: 0;
-  color: rgba(244, 248, 255, 0.72);
-  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+  background: var(--control-bg);
   cursor: pointer;
   transition: background 180ms ease, color 180ms ease, transform 180ms ease;
 }
 
 .icon-button:hover {
-  background: rgba(255, 255, 255, 0.14);
-  color: #ffffff;
+  background: var(--control-bg-hover);
+  color: var(--text-primary);
 }
 
 .icon-button:active {
@@ -133,22 +136,26 @@ const clear = () => {
   align-items: center;
   justify-content: center;
   width: 46px;
-  min-width: 46px;
-  height: 46px;
+  min-width: 112px;
+  height: 54px;
   padding: 0;
   border: 0;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.09);
-  color: rgba(246, 250, 255, 0.9);
-  font-size: 14px;
-  font-weight: 700;
+  border-radius: 22px;
+  background: var(--accent);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 800;
   cursor: pointer;
   transition: transform 180ms ease, background 180ms ease, color 180ms ease, opacity 180ms ease;
 }
 
+.submit-label {
+  line-height: 1;
+}
+
 .submit-button:hover:not(:disabled) {
   transform: translateY(-1px);
-  background: rgba(255, 255, 255, 0.13);
+  background: var(--accent-strong);
   color: #ffffff;
 }
 
@@ -167,7 +174,7 @@ const clear = () => {
     min-height: 60px;
     gap: 8px;
     padding: 8px 7px 8px 8px;
-    border-radius: 18px;
+    border-radius: 22px;
   }
 
   .icon-button {
@@ -177,11 +184,15 @@ const clear = () => {
   }
 
   .submit-button {
-    width: 44px;
-    min-width: 44px;
+    width: 48px;
+    min-width: 48px;
     height: 44px;
     padding: 0;
-    border-radius: 12px;
+    border-radius: 16px;
+  }
+
+  .submit-label {
+    display: none;
   }
 }
 </style>

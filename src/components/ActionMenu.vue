@@ -114,11 +114,11 @@ onUnmounted(() => {
   gap: 8px;
   width: auto;
   min-width: 0;
-  height: 46px;
-  padding: 0 12px 0 14px;
-  border-radius: 14px;
-  color: rgba(246, 250, 255, 0.92);
-  background: rgba(255, 255, 255, 0.09);
+  height: 54px;
+  padding: 0 18px 0 22px;
+  border-radius: 22px;
+  color: var(--text-primary);
+  background: var(--control-bg);
   border: 0;
   cursor: pointer;
   transition: background 180ms ease, transform 180ms ease;
@@ -127,6 +127,11 @@ onUnmounted(() => {
 .action-menu-trigger:hover,
 .action-menu.open .action-menu-trigger {
   background: rgba(255, 255, 255, 0.13);
+}
+
+:global(:root:not([data-theme="dark"])) .action-menu-trigger:hover,
+:global(:root:not([data-theme="dark"])) .action-menu.open .action-menu-trigger {
+  background: var(--control-bg-hover);
 }
 
 .action-menu-trigger:active {
@@ -139,12 +144,12 @@ onUnmounted(() => {
   white-space: nowrap;
   text-overflow: ellipsis;
   font-size: 14px;
-  font-weight: 750;
+  font-weight: 800;
 }
 
 .action-menu-chevron {
   flex: none;
-  color: rgba(232, 242, 255, 0.58);
+  color: var(--text-muted);
   transition: transform 180ms ease;
 }
 
@@ -154,15 +159,15 @@ onUnmounted(() => {
 
 .action-menu-content {
   position: absolute;
-  top: calc(100% + 10px);
+  top: calc(100% + 12px);
   left: 0;
   z-index: 20;
   min-width: 176px;
   padding: 8px;
-  border-radius: 16px;
-  background: rgba(8, 14, 24, 0.92);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 22px 64px rgba(4, 9, 18, 0.46);
+  border-radius: 20px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow-hover);
   backdrop-filter: blur(22px);
 }
 
@@ -172,10 +177,10 @@ onUnmounted(() => {
   justify-content: space-between;
   gap: 12px;
   width: 100%;
-  height: 38px;
-  padding: 0 10px;
-  border-radius: 10px;
-  color: rgba(234, 243, 255, 0.84);
+  height: 42px;
+  padding: 0 12px;
+  border-radius: 14px;
+  color: var(--text-secondary);
   background: transparent;
   cursor: pointer;
   transition: background 160ms ease, color 160ms ease;
@@ -183,6 +188,22 @@ onUnmounted(() => {
 
 .action-menu-item:hover,
 .action-menu-item.selected {
+  background: var(--control-bg);
+  color: var(--text-primary);
+}
+
+:global(:root[data-theme="dark"]) .action-menu-trigger:hover,
+:global(:root[data-theme="dark"]) .action-menu.open .action-menu-trigger {
+  background: rgba(255, 255, 255, 0.13);
+}
+
+:global(:root[data-theme="dark"]) .action-menu-content {
+  background: rgba(8, 14, 24, 0.92);
+  box-shadow: 0 22px 64px rgba(4, 9, 18, 0.46);
+}
+
+:global(:root[data-theme="dark"]) .action-menu-item:hover,
+:global(:root[data-theme="dark"]) .action-menu-item.selected {
   background: rgba(255, 255, 255, 0.08);
   color: #ffffff;
 }
@@ -202,7 +223,7 @@ onUnmounted(() => {
   .action-menu-trigger {
     height: 44px;
     padding: 0 12px;
-    border-radius: 12px;
+    border-radius: 16px;
   }
 
   .action-menu-label {

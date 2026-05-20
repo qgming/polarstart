@@ -67,17 +67,22 @@ const openLink = (url: string, external: boolean) => {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 9px 12px;
+  padding: 10px 14px;
   transform: translateX(-50%);
-  border-radius: 22px;
+  border-radius: 24px;
   overflow: visible;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow);
+  backdrop-filter: blur(46px) saturate(1.25);
+  -webkit-backdrop-filter: blur(46px) saturate(1.25);
+}
+
+:global(:root[data-theme="dark"]) .tabbar {
   background:
     radial-gradient(circle at 50% 8%, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.06) 48%, rgba(255, 255, 255, 0.03) 100%),
     rgba(255, 255, 255, 0.1);
-  border: 0;
-  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.1);
-  backdrop-filter: blur(46px) saturate(1.25);
-  -webkit-backdrop-filter: blur(46px) saturate(1.25);
+  border-color: transparent;
 }
 
 .tabbar::after {
@@ -88,8 +93,8 @@ const openLink = (url: string, external: boolean) => {
   bottom: -11px;
   height: 14px;
   border-radius: 50%;
-  background: rgba(15, 23, 42, 0.1);
-  filter: blur(15px);
+  background: rgba(15, 23, 42, 0.08);
+  filter: blur(14px);
   pointer-events: none;
 }
 
@@ -98,11 +103,11 @@ const openLink = (url: string, external: boolean) => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 52px;
-  height: 50px;
+  width: 54px;
+  height: 52px;
   padding: 0;
   border: 0;
-  border-radius: 14px;
+  border-radius: 18px;
   color: #f2f7ff;
   background: transparent;
   cursor: pointer;
@@ -126,11 +131,11 @@ const openLink = (url: string, external: boolean) => {
   justify-content: center;
   width: 42px;
   height: 42px;
-  border-radius: 11px;
-  background: rgba(255, 255, 255, 0.72);
+  border-radius: 15px;
+  background: #ffffff;
   border: 0;
   overflow: hidden;
-  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.16);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
   transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
 }
 
@@ -144,7 +149,7 @@ const openLink = (url: string, external: boolean) => {
 
 .tabbar-item:hover .tabbar-icon {
   transform: translateY(-1px);
-  box-shadow: 0 14px 22px rgba(0, 0, 0, 0.22);
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.16);
   filter: saturate(1.05) brightness(1.03);
 }
 
@@ -167,7 +172,7 @@ const openLink = (url: string, external: boolean) => {
     max-width: calc(100% - 18px);
     justify-content: space-between;
     padding: 7px 9px;
-    border-radius: 20px;
+    border-radius: 22px;
   }
 
   .tabbar-item {
@@ -182,7 +187,7 @@ const openLink = (url: string, external: boolean) => {
   .tabbar-icon {
     width: 36px;
     height: 36px;
-    border-radius: 10px;
+    border-radius: 13px;
   }
 }
  </style>
