@@ -1,15 +1,7 @@
 <script setup lang="ts">
+import HomeView from './views/HomeView.vue'
 </script>
 
 <template>
-  <router-view />
+  <HomeView />
 </template>
-
-<style>
-/* 全局应用深色模式 */
-#app {
-  min-height: 100vh;
-  background: var(--bg-primary);
-  color: var(--text-primary);
-}
-</style>

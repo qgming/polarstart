@@ -1,209 +1,169 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { Search, CloseOne } from '@icon-park/vue-next'
+import { computed, ref } from 'vue'
+import { ArrowUpRight, Search, X } from '@lucide/vue'
 
-const searchQuery = ref('')
-const isFocused = ref(false)
+const query = ref('')
+const focused = ref(false)
 
-const handleSearch = () => {
-  if (searchQuery.value.trim()) {
-    window.open(`https://www.bing.com/search?q=${encodeURIComponent(searchQuery.value)}`, '_blank')
-  }
+const trimmedQuery = computed(() => query.value.trim())
+const canSubmit = computed(() => trimmedQuery.value.length > 0)
+
+const submit = () => {
+  if (!canSubmit.value) return
+  window.open(`https://www.bing.com/search?q=${encodeURIComponent(trimmedQuery.value)}`, '_blank', 'noopener')
 }
 
-const clearSearch = () => {
-  searchQuery.value = ''
-}
-
-const handleFocus = () => {
-  isFocused.value = true
-}
-
-const handleBlur = () => {
-  isFocused.value = false
+const clear = () => {
+  query.value = ''
 }
 </script>
 
 <template>
-  <div class="search-wrapper">
-    <div
-      class="search-container glass-primary will-change-backdrop gpu-accelerate"
-      :class="{ 'search-focused': isFocused }"
-    >
-      <!-- 搜索图标 -->
-      <div class="search-icon-wrapper">
-        <Search theme="outline" size="22" :strokeWidth="2.5" class="search-icon" />
-      </div>
-
-      <!-- 输入框 -->
-      <input
-        v-model="searchQuery"
-        type="text"
-        placeholder="搜索互联网..."
-        class="search-input"
-        autocomplete="off"
-        @keyup.enter="handleSearch"
-        @focus="handleFocus"
-        @blur="handleBlur"
-      />
-
-      <!-- 清除按钮 -->
-      <transition name="fade-scale">
-        <div v-if="searchQuery" class="clear-button-wrapper" @click="clearSearch">
-          <CloseOne theme="outline" size="20" class="clear-icon" />
-        </div>
-      </transition>
+  <div class="search-shell" :class="{ focused }">
+    <div class="search-icon-wrap">
+      <Search :size="20" :stroke-width="2.2" />
     </div>
+
+    <input
+      v-model="query"
+      class="search-input"
+      type="text"
+      placeholder="搜索网页、想法，或者下一步要做什么"
+      autocomplete="off"
+      @focus="focused = true"
+      @blur="focused = false"
+      @keyup.enter="submit"
+    />
+
+    <button v-if="query" class="icon-button" type="button" aria-label="清空搜索" @click="clear">
+      <X :size="16" :stroke-width="2.4" />
+    </button>
+
+    <button class="submit-button" type="button" :disabled="!canSubmit" @click="submit">
+      <span>搜索</span>
+      <ArrowUpRight :size="16" :stroke-width="2.25" />
+    </button>
   </div>
 </template>
 
 <style scoped>
-/* 搜索包裹器 */
-.search-wrapper {
-  width: 100%;
-  max-width: 680px;
-}
-
-/* 搜索容器 */
-.search-container {
-  display: flex;
+.search-shell {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
   align-items: center;
-  gap: 0.75rem;
-  height: 3.5rem;
-  padding: 0 1rem;
-  border-radius: 1rem;
-  transition: all var(--duration-smooth) var(--ease-spring);
+  gap: 10px;
+  min-height: 68px;
+  padding: 10px 10px 10px 16px;
+  border-radius: 22px;
+  background: rgba(9, 14, 24, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 18px 64px rgba(5, 10, 20, 0.3);
+  backdrop-filter: blur(20px);
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
 }
 
-.search-container:hover {
-  transform: translateY(-4px) scale(1.01);
-  border-color: var(--border-glass-strong);
-  box-shadow: var(--shadow-glass-xl);
+.search-shell:hover,
+.search-shell.focused {
+  transform: translateY(-2px);
+  background: rgba(11, 18, 30, 0.62);
+  border-color: rgba(170, 214, 255, 0.28);
+  box-shadow: 0 24px 72px rgba(5, 10, 20, 0.38);
 }
 
-.search-container.search-focused {
-  transform: translateY(-6px) scale(1.02);
-  border-color: rgba(255, 255, 255, 0.25);
-  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3),
-              0 0 0 1px rgba(255, 255, 255, 0.1) inset;
-}
-
-/* 搜索图标包裹器 */
-.search-icon-wrapper {
+.search-icon-wrap {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
+  color: rgba(232, 242, 255, 0.62);
 }
 
-.search-icon {
-  color: rgba(255, 255, 255, 0.7);
-  transition: color var(--duration-normal) var(--ease-smooth);
-}
-
-.search-container:hover .search-icon,
-.search-container.search-focused .search-icon {
-  color: rgba(255, 255, 255, 0.95);
-}
-
-/* 输入框 */
 .search-input {
-  flex: 1;
-  height: 100%;
+  min-width: 0;
+  width: 100%;
+  border: 0;
+  outline: 0;
   background: transparent;
-  border: none;
-  outline: none;
-  color: rgba(255, 255, 255, 0.95);
-  font-size: 1rem;
-  line-height: 1.5;
-  transition: color var(--duration-normal) var(--ease-smooth);
+  color: #f4f8ff;
+  font-size: 16px;
+  line-height: 1.4;
 }
 
 .search-input::placeholder {
-  color: rgba(255, 255, 255, 0.5);
-  transition: color var(--duration-normal) var(--ease-smooth);
+  color: rgba(232, 242, 255, 0.44);
 }
 
-.search-input:focus::placeholder {
-  color: rgba(255, 255, 255, 0.3);
-}
-
-/* 清除按钮 */
-.clear-button-wrapper {
-  display: flex;
+.icon-button {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 0.5rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  border: 0;
+  color: rgba(244, 248, 255, 0.72);
+  background: rgba(255, 255, 255, 0.08);
   cursor: pointer;
-  flex-shrink: 0;
-  background: rgba(255, 255, 255, 0.1);
-  transition: all var(--duration-normal) var(--ease-spring);
+  transition: background 180ms ease, color 180ms ease, transform 180ms ease;
 }
 
-.clear-button-wrapper:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: scale(1.1);
+.icon-button:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
 }
 
-.clear-button-wrapper:active {
-  transform: scale(0.95);
+.icon-button:active {
+  transform: scale(0.96);
 }
 
-.clear-icon {
-  color: rgba(255, 255, 255, 0.6);
-  transition: color var(--duration-fast) var(--ease-smooth);
+.submit-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 92px;
+  height: 46px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #89c7ff 0%, #5de3c1 100%);
+  color: #07111f;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 180ms ease, filter 180ms ease, opacity 180ms ease;
 }
 
-.clear-button-wrapper:hover .clear-icon {
-  color: rgba(255, 255, 255, 0.95);
+.submit-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: saturate(1.08) brightness(1.02);
 }
 
-/* 过渡动画 */
-.fade-scale-enter-active,
-.fade-scale-leave-active {
-  transition: all var(--duration-normal) var(--ease-spring);
+.submit-button:active:not(:disabled) {
+  transform: scale(0.98);
 }
 
-.fade-scale-enter-from {
-  opacity: 0;
-  transform: scale(0.8);
-}
-
-.fade-scale-leave-to {
-  opacity: 0;
-  transform: scale(0.8);
-}
-
-/* 响应式设计 */
-@media (max-width: 768px) {
-  .search-container {
-    height: 3rem;
-    padding: 0 0.875rem;
-    gap: 0.625rem;
-  }
-
-  .search-input {
-    font-size: 0.9375rem;
-  }
+.submit-button:disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
 }
 
 @media (max-width: 640px) {
-  .search-container {
-    height: 2.75rem;
-    padding: 0 0.75rem;
-    gap: 0.5rem;
-    border-radius: 0.875rem;
+  .search-shell {
+    grid-template-columns: auto 1fr auto;
+    min-height: 60px;
+    padding: 10px 10px 10px 14px;
+    border-radius: 20px;
   }
 
-  .search-input {
-    font-size: 0.875rem;
+  .submit-button {
+    width: 46px;
+    min-width: 46px;
+    padding: 0;
+    border-radius: 12px;
   }
 
-  .clear-button-wrapper {
-    width: 1.75rem;
-    height: 1.75rem;
+  .submit-button span {
+    display: none;
   }
 }
 </style>

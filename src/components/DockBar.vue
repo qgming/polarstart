@@ -1,334 +1,176 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import WebsiteIcon from '@/components/WebsiteIcon.vue'
+import { BookOpen, Code2, Globe, House, Play, Sparkles } from '@lucide/vue'
 
-const router = useRouter()
-
-// 左侧导航项
-const leftNavItems = ref([
-  { name: '信息', type: 'nav', route: '/info-cards', icon: '📱' }
-])
-
-// 中间网页快捷方式
-const webLinks = ref([
-  { name: 'Google', type: 'link', url: 'https://www.google.com', icon: '🔍' },
-  { name: 'GitHub', type: 'link', url: 'https://github.com', icon: '🐙' },
-  { name: 'Bilibili', type: 'link', url: 'https://www.bilibili.com', icon: '📺' },
-  { name: 'X', type: 'link', url: 'https://x.com', icon: '✖️' },
-  { name: 'Linux.do', type: 'link', url: 'https://linux.do', icon: '🐧' }
-])
-
-// 右侧导航项
-const rightNavItems = ref([
-  { name: '分类', type: 'nav', route: '/web-categories', icon: '🌐' }
-])
-
-// 处理Dock项目点击
-const handleDockItemClick = (item: any) => {
-  if (item.type === 'nav' && item.route) {
-    router.push(item.route)
-  } else if (item.type === 'link' && item.url) {
-    window.open(item.url, '_blank')
+const links = [
+  {
+    name: '主页',
+    url: '/',
+    icon: House,
+    external: false
+  },
+  {
+    name: 'Google',
+    url: 'https://www.google.com',
+    icon: Globe,
+    external: true
+  },
+  {
+    name: 'GitHub',
+    url: 'https://github.com',
+    icon: Code2,
+    external: true
+  },
+  {
+    name: 'Bilibili',
+    url: 'https://www.bilibili.com',
+    icon: Play,
+    external: true
+  },
+  {
+    name: 'Docs',
+    url: 'https://vite.dev',
+    icon: BookOpen,
+    external: true
+  },
+  {
+    name: '灵感',
+    url: 'https://dribbble.com',
+    icon: Sparkles,
+    external: true
   }
+]
+
+const openLink = (url: string, external: boolean) => {
+  if (!external) return
+  window.open(url, '_blank', 'noopener')
 }
 </script>
 
 <template>
-  <!-- 底部Dock栏 - 现代化高斯模糊设计 -->
-  <div class="dock-wrapper">
-    <!-- Dock容器 -->
-    <div class="dock-container glass-primary will-change-backdrop gpu-accelerate">
-
-      <!-- 左侧：信息导航 -->
-      <div class="dock-section">
-        <div
-          v-for="(item, index) in leftNavItems"
-          :key="`left-${index}`"
-          class="dock-item"
-          :style="{ animationDelay: `${0.4 + index * 0.05}s` }"
-          @click="handleDockItemClick(item)"
-        >
-          <div class="dock-icon-container">
-            <span class="dock-icon">{{ item.icon }}</span>
-          </div>
-          <div class="dock-label">{{ item.name }}</div>
-        </div>
-      </div>
-
-      <!-- 分隔线 -->
-      <div class="dock-divider"></div>
-
-      <!-- 中间：网页导航链接 -->
-      <div class="dock-section dock-section-main">
-        <div
-          v-for="(item, index) in webLinks"
-          :key="`web-${index}`"
-          class="dock-item"
-          :style="{ animationDelay: `${0.45 + index * 0.05}s` }"
-          @click="handleDockItemClick(item)"
-        >
-          <div class="dock-icon-container">
-            <WebsiteIcon
-              :url="item.url"
-              :name="item.name"
-              :fallback-icon="item.icon"
-              :size="40"
-              class="dock-icon-website"
-            />
-          </div>
-          <div class="dock-label">{{ item.name }}</div>
-        </div>
-      </div>
-
-      <!-- 分隔线 -->
-      <div class="dock-divider"></div>
-
-      <!-- 右侧：分类导航 -->
-      <div class="dock-section">
-        <div
-          v-for="(item, index) in rightNavItems"
-          :key="`right-${index}`"
-          class="dock-item"
-          :style="{ animationDelay: `${0.65 + index * 0.05}s` }"
-          @click="handleDockItemClick(item)"
-        >
-          <div class="dock-icon-container">
-            <span class="dock-icon">{{ item.icon }}</span>
-          </div>
-          <div class="dock-label">{{ item.name }}</div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <nav class="tabbar" aria-label="快捷入口">
+    <button
+      v-for="(item, index) in links"
+      :key="item.name"
+      class="tabbar-item"
+      :class="{ active: !item.external }"
+      type="button"
+      :style="{ animationDelay: `${index * 45}ms` }"
+      @click="openLink(item.url, item.external)"
+    >
+      <span class="tabbar-icon">
+        <component :is="item.icon" :size="20" :stroke-width="2.25" />
+      </span>
+      <span class="tabbar-label">{{ item.name }}</span>
+    </button>
+  </nav>
 </template>
 
 <style scoped>
-/* Dock包裹器 */
-.dock-wrapper {
+.tabbar {
   position: fixed;
-  bottom: 1.5rem;
   left: 50%;
+  bottom: 24px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
   transform: translateX(-50%);
-  z-index: 50;
-  opacity: 0;
-  animation: dockFadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards;
+  border-radius: 24px;
+  background: rgba(9, 14, 24, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 18px 60px rgba(5, 10, 20, 0.32);
+  backdrop-filter: blur(20px);
 }
 
-/* Dock容器 */
-.dock-container {
+.tabbar-item {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.625rem;
-  border-radius: 1rem;
-  transition: all var(--duration-smooth) var(--ease-smooth);
+  gap: 7px;
+  width: 68px;
+  padding: 8px 6px 6px;
+  border: 0;
+  border-radius: 18px;
+  color: #f2f7ff;
+  background: transparent;
+  cursor: pointer;
+  animation: rise-in 420ms ease both;
+  transition: transform 180ms ease, background 180ms ease;
 }
 
-.dock-container:hover {
-  border-color: var(--border-glass-strong);
-  box-shadow: var(--shadow-glass-xl);
-  transform: translateY(-2px);
+.tabbar-item:hover,
+.tabbar-item.active {
+  background: rgba(255, 255, 255, 0.08);
 }
 
-/* Dock分区 */
-.dock-section {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+.tabbar-item:hover {
+  transform: translateY(-4px);
 }
 
-.dock-section-main {
-  padding: 0 0.5rem;
+.tabbar-item:active {
+  transform: scale(0.96);
 }
 
-/* Dock分隔线 */
-.dock-divider {
-  width: 1px;
-  height: 2.25rem;
-  background: var(--border-glass-medium);
-  margin: 0 0.5rem;
-}
-
-/* Dock项目 */
-.dock-item {
-  position: relative;
-  animation: dockItemFadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) backwards;
-}
-
-/* 图标容器 */
-.dock-icon-container {
-  position: relative;
-  width: 2.75rem;
-  height: 2.75rem;
-  border-radius: 0.75rem;
-  background: rgba(255, 255, 255, 0.65);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border-glass-strong);
-  display: flex;
+.tabbar-icon {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  box-shadow: var(--shadow-glass-sm);
-  transition: all var(--duration-normal) var(--ease-spring);
-  overflow: hidden;
+  width: 42px;
+  height: 42px;
+  border-radius: 15px;
+  color: rgba(233, 242, 255, 0.86);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* 悬停光泽效果 */
-.dock-icon-container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--gradient-glass);
-  opacity: 0;
-  transition: opacity var(--duration-normal) var(--ease-smooth);
+.tabbar-item.active .tabbar-icon {
+  color: #07111f;
+  background: linear-gradient(135deg, #89c7ff 0%, #5de3c1 100%);
 }
 
-.dock-item:hover .dock-icon-container {
-  transform: translateY(-6px) scale(1.1);
-  background: rgba(255, 255, 255, 0.8);
-  border-color: rgba(255, 255, 255, 0.5);
-  box-shadow: var(--shadow-glass-lg);
-}
-
-.dock-item:hover .dock-icon-container::before {
-  opacity: 1;
-}
-
-.dock-item:active .dock-icon-container {
-  transform: translateY(-4px) scale(1.05);
-}
-
-/* 图标 */
-.dock-icon {
-  font-size: 1.25rem;
-  position: relative;
-  z-index: 1;
-  transition: transform var(--duration-fast) var(--ease-smooth);
-}
-
-.dock-item:hover .dock-icon {
-  transform: scale(1.1);
-}
-
-/* 网站图标样式 */
-.dock-icon-website {
-  position: relative;
-  z-index: 1;
-  transition: transform var(--duration-fast) var(--ease-smooth);
-}
-
-.dock-item:hover .dock-icon-website {
-  transform: scale(1.1);
-}
-
-/* Dock标签 */
-.dock-label {
-  position: absolute;
-  bottom: -1.75rem;
-  left: 50%;
-  transform: translateX(-50%) scale(0.85);
-  white-space: nowrap;
-  font-size: 0.625rem;
+.tabbar-label {
+  font-size: 11px;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.95);
-  background: rgba(0, 0, 0, 0.9);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.375rem;
-  opacity: 0;
-  pointer-events: none;
-  transition: all var(--duration-normal) var(--ease-spring);
-  box-shadow: var(--shadow-glass-md);
-  border: 1px solid var(--border-glass-subtle);
+  color: rgba(233, 242, 255, 0.76);
 }
 
-.dock-item:hover .dock-label {
-  opacity: 1;
-  transform: translateX(-50%) scale(1);
-  bottom: -1.875rem;
-}
-
-/* 动画关键帧 */
-@keyframes dockFadeIn {
+@keyframes rise-in {
   from {
     opacity: 0;
-    transform: translateX(-50%) translateY(10px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-}
-
-@keyframes dockItemFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px) scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-/* 响应式设计 */
-@media (max-width: 768px) {
-  .dock-wrapper {
-    bottom: 1rem;
-  }
-
-  .dock-icon-container {
-    width: 2.375rem;
-    height: 2.375rem;
-    border-radius: 0.625rem;
-  }
-
-  .dock-icon {
-    font-size: 1.125rem;
-  }
-
-  .dock-divider {
-    height: 2rem;
+    transform: translateY(0);
   }
 }
 
 @media (max-width: 640px) {
-  .dock-wrapper {
-    bottom: 0.75rem;
+  .tabbar {
+    bottom: 18px;
+    gap: 5px;
+    width: calc(100% - 24px);
+    justify-content: space-between;
+    padding: 8px;
+    border-radius: 20px;
   }
 
-  .dock-container {
-    padding: 0.5rem;
-    gap: 0.375rem;
+  .tabbar-item {
+    width: auto;
+    min-width: 48px;
+    gap: 5px;
+    padding: 6px 4px 4px;
   }
 
-  .dock-section {
-    gap: 0.375rem;
+  .tabbar-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 14px;
   }
 
-  .dock-icon-container {
-    width: 2.125rem;
-    height: 2.125rem;
-    border-radius: 0.5rem;
-  }
-
-  .dock-icon {
-    font-size: 1rem;
-  }
-
-  .dock-divider {
-    height: 1.75rem;
-    margin: 0 0.25rem;
-  }
-
-  .dock-section-main {
-    padding: 0 0.25rem;
+  .tabbar-label {
+    font-size: 10px;
   }
 }
-</style>
+ </style>
