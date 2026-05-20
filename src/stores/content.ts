@@ -156,6 +156,21 @@ const hotApiBases = [
   'https://api.cczo.cc/60s'
 ] as const
 
+const AIHOT_API_BASE = 'https://aihot.virxact.com/api/public'
+
+const createAihotApiUrl = (path: string, query?: Record<string, string | number>) => {
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`
+  const searchParams = new URLSearchParams()
+
+  Object.entries(query ?? {}).forEach(([key, value]) => {
+    searchParams.set(key, String(value))
+  })
+
+  const queryString = searchParams.toString()
+
+  return `${AIHOT_API_BASE}${normalizedPath}${queryString ? `?${queryString}` : ''}`
+}
+
 const shuffleArray = <T>(items: readonly T[]) => {
   const shuffled = [...items]
 
@@ -370,7 +385,7 @@ export const useAihotStore = defineStore('aihot-content', () => {
     dailyErrorMessage.value = ''
 
     try {
-      const response = await fetch('/aihot-api/daily')
+      const response = await fetch(createAihotApiUrl('/daily'))
       if (!response.ok) throw new Error(`日报请求失败: ${response.status}`)
 
       daily.value = await response.json() as DailyReport
@@ -394,7 +409,7 @@ export const useAihotStore = defineStore('aihot-content', () => {
     itemsErrorMessage.value = ''
 
     try {
-      const response = await fetch('/aihot-api/items?mode=selected&take=30')
+      const response = await fetch(createAihotApiUrl('/items', { mode: 'selected', take: 30 }))
       if (!response.ok) throw new Error(`动态请求失败: ${response.status}`)
 
       const data = await response.json() as AihotItemsResponse

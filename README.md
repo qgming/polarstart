@@ -101,19 +101,18 @@ PolarStart 现在不再只是一个简单的搜索首页，而是一个带顶部
 
 | 数据 | 用途 | 方式 |
 | --- | --- | --- |
-| AI HOT | AI 日报、AI 动态 | `/aihot-api` Vite 代理 |
+| AI HOT | AI 日报、AI 动态 | 官方公开 API 直连 |
 | 60s API | 全网热点、IT 动态 | 公网实例直连 + 随机兜底 |
 | Bing 每日壁纸 | 首页背景 | `https://bing.ee123.net/img/` |
 
 ### AI HOT
 
-- `https://aihot.virxact.com`
-- 通过 Vite 代理到 `/aihot-api`
-- 已按要求附带浏览器风格 `User-Agent`
+- `https://aihot.virxact.com/api/public`
+- 浏览器端直接请求官方公开 API
 
 ### 60s API
 
-直接请求公网实例，不走 Vite 代理。
+直接请求公网实例。
 
 当前内置兜底实例：
 
@@ -193,8 +192,8 @@ npm run preview
 ## 说明
 
 - Bing 壁纸默认开启
-- AI HOT 页面依赖本地开发代理，修改 `vite.config.ts` 后需要重启 dev server
-- 60s API 使用公网实例直连，因此更换实例列表时不需要改 Vite 代理
+- AI HOT 页面直接请求官方公开 API
+- 60s API 使用公网实例直连
 
 ## License
 
