@@ -156,7 +156,7 @@ const hotApiBases = [
   'https://api.cczo.cc/60s'
 ] as const
 
-const AIHOT_API_BASE = 'https://aihot.virxact.com/api/public'
+const AIHOT_API_BASE = '/aihot-api'
 
 const createAihotApiUrl = (path: string, query?: Record<string, string | number>) => {
   const normalizedPath = path.startsWith('/') ? path : `/${path}`

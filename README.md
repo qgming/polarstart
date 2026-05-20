@@ -101,14 +101,15 @@ PolarStart 现在不再只是一个简单的搜索首页，而是一个带顶部
 
 | 数据 | 用途 | 方式 |
 | --- | --- | --- |
-| AI HOT | AI 日报、AI 动态 | 官方公开 API 直连 |
+| AI HOT | AI 日报、AI 动态 | 同源 `/aihot-api` 代理 |
 | 60s API | 全网热点、IT 动态 | 公网实例直连 + 随机兜底 |
 | Bing 每日壁纸 | 首页背景 | `https://bing.ee123.net/img/` |
 
 ### AI HOT
 
-- `https://aihot.virxact.com/api/public`
-- 浏览器端直接请求官方公开 API
+- 本地开发: Vite 代理 `/aihot-api` -> `https://aihot.virxact.com/api/public`
+- Cloudflare Pages: Functions 代理 `/aihot-api/*` -> `https://aihot.virxact.com/api/public/*`
+- 代理请求会附带浏览器风格 `User-Agent`
 
 ### 60s API
 
@@ -153,6 +154,11 @@ src/
     ItNewsView.vue
     AihotView.vue
     AihotItemsView.vue
+functions/
+  aihot-api/
+    [[path]].js
+public/
+  _redirects
 ```
 
 ## 安装与开发
@@ -178,6 +184,18 @@ npm run build
 npm run preview
 ```
 
+## Cloudflare Pages 部署
+
+- Framework preset: `None`
+- Build command: `npm run build`
+- Build output directory: `dist`
+- Node.js version: `22`
+
+项目包含两个和 Cloudflare Pages 相关的文件:
+
+- `functions/aihot-api/[[path]].js`: 代理 AI HOT 请求,解决生产环境直连失败问题
+- `public/_redirects`: 保留 `/aihot-api/*` 代理路径,并处理 Vue Router history 模式的页面刷新回退
+
 ## 当前快捷入口
 
 首页底部栏当前包含：
@@ -192,7 +210,7 @@ npm run preview
 ## 说明
 
 - Bing 壁纸默认开启
-- AI HOT 页面直接请求官方公开 API
+- AI HOT 页面通过同源 `/aihot-api` 访问,本地与 Cloudflare 部署保持一致
 - 60s API 使用公网实例直连
 
 ## License
