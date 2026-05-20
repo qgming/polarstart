@@ -4,6 +4,7 @@ import { defineStore } from 'pinia'
 export type ThemeMode = 'light' | 'dark'
 
 const STORAGE_KEY = 'polarstart-theme'
+const WALLPAPER_STORAGE_KEY = 'polarstart-bing-wallpaper'
 
 const getInitialTheme = (): ThemeMode => {
   if (typeof window === 'undefined') return 'light'
@@ -14,8 +15,19 @@ const getInitialTheme = (): ThemeMode => {
   return 'light'
 }
 
+const getInitialWallpaperEnabled = () => {
+  if (typeof window === 'undefined') return true
+
+  const savedValue = window.localStorage.getItem(WALLPAPER_STORAGE_KEY)
+  if (savedValue === 'true') return true
+  if (savedValue === 'false') return false
+
+  return true
+}
+
 export const useThemeStore = defineStore('theme', () => {
   const mode = ref<ThemeMode>(getInitialTheme())
+  const bingWallpaperEnabled = ref(getInitialWallpaperEnabled())
 
   const isDark = computed(() => mode.value === 'dark')
 
@@ -34,6 +46,10 @@ export const useThemeStore = defineStore('theme', () => {
     mode.value = isDark.value ? 'light' : 'dark'
   }
 
+  const toggleBingWallpaper = () => {
+    bingWallpaperEnabled.value = !bingWallpaperEnabled.value
+  }
+
   watch(mode, (nextMode) => {
     applyTheme()
     if (typeof window !== 'undefined') {
@@ -41,10 +57,18 @@ export const useThemeStore = defineStore('theme', () => {
     }
   }, { immediate: true })
 
+  watch(bingWallpaperEnabled, (enabled) => {
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem(WALLPAPER_STORAGE_KEY, String(enabled))
+    }
+  }, { immediate: true })
+
   return {
     mode,
+    bingWallpaperEnabled,
     isDark,
     setTheme,
-    toggleTheme
+    toggleTheme,
+    toggleBingWallpaper
   }
 })

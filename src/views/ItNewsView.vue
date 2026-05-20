@@ -1,78 +1,68 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { AlertCircle, ExternalLink, RefreshCw } from '@lucide/vue'
-import { useAihotStore, type CategoryKey } from '@/stores/content'
+import { useItNewsStore } from '@/stores/content'
 
-const aihotStore = useAihotStore()
+const itNewsStore = useItNewsStore()
 
-const categoryLabels: Record<CategoryKey, string> = {
-  'ai-models': '模型',
-  'ai-products': '产品',
-  industry: '行业',
-  paper: '论文',
-  tip: '观点'
-}
+const newsItems = computed(() => itNewsStore.items)
 
-const newsItems = computed(() => aihotStore.items)
+const formatDate = (value: string, timestamp: number) => {
+  if (timestamp) {
+    return new Intl.DateTimeFormat('zh-CN', {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(new Date(timestamp))
+  }
 
-const formatDate = (value: string | null) => {
-  if (!value) return '时间未知'
-  return new Intl.DateTimeFormat('zh-CN', {
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  }).format(new Date(value))
-}
-
-const categoryText = (category: CategoryKey | null) => {
-  return category ? categoryLabels[category] : '未分类'
+  return value || '时间未知'
 }
 
 const refreshItems = async () => {
-  await aihotStore.loadItems(true)
+  await itNewsStore.loadItems(true)
 }
 </script>
 
 <template>
-  <main class="ai-shell">
-    <section class="ai-layout">
-      <header class="ai-hero">
-        <h1>AI 动态</h1>
+  <main class="it-shell">
+    <section class="it-layout">
+      <header class="it-hero">
+        <h1>IT 动态</h1>
 
-        <button class="refresh-button" type="button" :disabled="aihotStore.itemsLoading" @click="refreshItems">
-          <RefreshCw :class="{ spinning: aihotStore.itemsLoading }" :size="16" :stroke-width="2.3" />
+        <button class="refresh-button" type="button" :disabled="itNewsStore.loading" @click="refreshItems">
+          <RefreshCw :class="{ spinning: itNewsStore.loading }" :size="16" :stroke-width="2.3" />
           <span>刷新</span>
         </button>
       </header>
 
-      <div v-if="aihotStore.itemsErrorMessage" class="state-card error-card">
+      <div v-if="itNewsStore.errorMessage" class="state-card error-card">
         <AlertCircle :size="18" :stroke-width="2.3" />
-        <span>{{ aihotStore.itemsErrorMessage }}</span>
+        <span>{{ itNewsStore.errorMessage }}</span>
       </div>
 
-      <div v-else-if="aihotStore.itemsLoading && !aihotStore.itemsLoaded" class="state-card">
+      <div v-else-if="itNewsStore.loading && !itNewsStore.loaded" class="state-card">
         <RefreshCw class="spinning" :size="18" :stroke-width="2.3" />
-        <span>正在读取 AI 动态</span>
+        <span>正在读取 IT 动态</span>
       </div>
 
-      <section v-else class="news-list" aria-label="AI 动态列表">
+      <section v-else class="news-list" aria-label="IT 动态列表">
         <a
           v-for="item in newsItems"
-          :key="item.id"
+          :key="item.link"
           class="news-row"
-          :href="item.url"
+          :href="item.link"
           target="_blank"
           rel="noopener noreferrer"
         >
           <div class="news-main">
             <div class="news-meta">
-              <span class="category-chip">{{ categoryText(item.category) }}</span>
-              <span>{{ item.source }}</span>
-              <time>{{ formatDate(item.publishedAt) }}</time>
+              <span>IT之家</span>
+              <time>{{ formatDate(item.created, item.created_at) }}</time>
             </div>
             <h2>{{ item.title }}</h2>
-            <p v-if="item.summary">{{ item.summary }}</p>
+            <p>{{ item.description }}</p>
           </div>
 
           <ExternalLink class="external-icon" :size="15" :stroke-width="2.3" aria-hidden="true" />
@@ -83,19 +73,19 @@ const refreshItems = async () => {
 </template>
 
 <style scoped>
-.ai-shell {
+.it-shell {
   min-height: 100vh;
   background: var(--app-bg);
   color: var(--text-primary);
 }
 
-.ai-layout {
+.it-layout {
   width: min(100%, 1120px);
   margin: 0 auto;
   padding: 92px clamp(16px, 4vw, 28px) 56px;
 }
 
-.ai-hero {
+.it-hero {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
@@ -103,7 +93,7 @@ const refreshItems = async () => {
   margin-bottom: 22px;
 }
 
-.ai-hero h1 {
+.it-hero h1 {
   margin: 0;
   font-size: clamp(28px, 4vw, 42px);
   line-height: 1.12;
@@ -181,20 +171,13 @@ const refreshItems = async () => {
   display: flex;
   align-items: center;
   gap: 10px;
-  flex-wrap: wrap;
   color: var(--text-muted);
   font-size: 12px;
   font-weight: 700;
 }
 
-.category-chip {
-  display: inline-flex;
-  align-items: center;
-  min-height: 24px;
-  padding: 0 10px;
-  border-radius: 999px;
+.news-meta span {
   color: var(--accent-text);
-  background: var(--accent-soft);
 }
 
 .news-row h2 {
@@ -229,11 +212,11 @@ const refreshItems = async () => {
 }
 
 @media (max-width: 640px) {
-  .ai-layout {
+  .it-layout {
     padding-top: 78px;
   }
 
-  .ai-hero {
+  .it-hero {
     align-items: flex-start;
     flex-direction: column;
   }

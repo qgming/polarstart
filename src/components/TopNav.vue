@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Flame, Home, Moon, Newspaper, Sun } from '@lucide/vue'
+import { Flame, Home, Image, Moon, Newspaper, Rss, Sun, TrendingUp } from '@lucide/vue'
 import { useThemeStore } from '@/stores/theme'
 
 const themeStore = useThemeStore()
@@ -12,14 +12,26 @@ const navItems = [
     icon: Home
   },
   {
+    to: '/hot',
+    name: 'hot',
+    label: '全网热点',
+    icon: TrendingUp
+  },
+  {
+    to: '/it-news',
+    name: 'it-news',
+    label: 'IT 动态',
+    icon: Rss
+  },
+  {
     to: '/aihot',
     name: 'aihot-daily',
     label: 'AI 日报',
     icon: Newspaper
   },
   {
-    to: '/aihot/items',
-    name: 'aihot-items',
+    to: '/ainews',
+    name: 'ainews',
     label: 'AI 动态',
     icon: Flame
   }
@@ -56,7 +68,19 @@ const navItems = [
 
       <div class="nav-right">
         <button
-          class="theme-button"
+          class="icon-button"
+          type="button"
+          :class="{ active: themeStore.bingWallpaperEnabled }"
+          :aria-label="themeStore.bingWallpaperEnabled ? '关闭 Bing 壁纸' : '开启 Bing 壁纸'"
+          :title="themeStore.bingWallpaperEnabled ? '关闭 Bing 壁纸' : '开启 Bing 壁纸'"
+          :aria-pressed="themeStore.bingWallpaperEnabled"
+          @click="themeStore.toggleBingWallpaper"
+        >
+          <Image :size="17" :stroke-width="2.25" aria-hidden="true" />
+        </button>
+
+        <button
+          class="icon-button"
           type="button"
           :aria-label="themeStore.isDark ? '切换为浅色模式' : '切换为深色模式'"
           :title="themeStore.isDark ? '切换为浅色模式' : '切换为深色模式'"
@@ -139,11 +163,10 @@ const navItems = [
   box-shadow: none;
   font-size: 14px;
   font-weight: 750;
-  transition: transform 180ms ease, background 180ms ease, border-color 180ms ease, color 180ms ease, box-shadow 180ms ease;
+  transition: background 180ms ease, border-color 180ms ease, color 180ms ease, box-shadow 180ms ease;
 }
 
 .nav-link:hover {
-  transform: translateY(-1px);
   color: var(--text-primary);
   background: var(--control-bg-hover);
   border-color: var(--accent-border);
@@ -168,7 +191,7 @@ const navItems = [
   justify-content: flex-end;
 }
 
-.theme-button {
+.icon-button {
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
@@ -176,18 +199,16 @@ const navItems = [
   width: 40px;
   height: 34px;
   padding: 0;
-  border: 1px solid transparent;
+  border: 0;
   border-radius: 12px;
   color: var(--text-secondary);
-  background: var(--control-bg);
+  background: transparent;
   cursor: pointer;
-  transition: transform 180ms ease, background 180ms ease, border-color 180ms ease, color 180ms ease;
+  transition: color 180ms ease;
 }
 
-.theme-button:hover {
-  transform: translateY(-1px);
-  background: var(--control-bg-hover);
-  border-color: var(--accent-border);
+.icon-button:hover,
+.icon-button.active {
   color: var(--accent-text);
 }
 

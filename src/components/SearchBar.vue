@@ -71,17 +71,18 @@ const clear = () => {
   min-height: 76px;
   padding: 11px 12px 11px 12px;
   border-radius: 30px;
-  background: var(--card-bg);
+  background: color-mix(in srgb, var(--app-bg) 72%, transparent);
   border: 1px solid var(--card-border);
   box-shadow: var(--card-shadow);
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
   transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
 }
 
 .search-shell:hover,
 .search-shell.focused {
   transform: translateY(-2px);
-  background: var(--card-bg-hover);
+  background: color-mix(in srgb, var(--app-bg) 78%, transparent);
   border-color: var(--accent-border);
   box-shadow: var(--card-shadow-hover);
 }

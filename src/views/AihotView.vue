@@ -1,44 +1,13 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { AlertCircle, Newspaper, RefreshCw } from '@lucide/vue'
+import { useAihotStore } from '@/stores/content'
 
-type DailySectionItem = {
-  title: string
-  summary: string | null
-  sourceUrl: string
-  sourceName: string
-}
-
-type DailySection = {
-  label: string
-  items: DailySectionItem[]
-}
-
-type DailyReport = {
-  date: string
-  generatedAt: string
-  windowStart: string
-  windowEnd: string
-  lead: {
-    title: string
-    leadParagraph: string
-  } | null
-  sections: DailySection[]
-  flashes: Array<{
-    title: string
-    sourceName: string
-    sourceUrl: string
-    publishedAt: string | null
-  }>
-}
-
-const daily = ref<DailyReport | null>(null)
-const loading = ref(true)
-const errorMessage = ref('')
+const aihotStore = useAihotStore()
 const activeSectionLabel = ref('')
 
 const featuredSections = computed(() => {
-  return daily.value?.sections.filter((section) => section.items.length > 0) ?? []
+  return aihotStore.daily?.sections.filter((section) => section.items.length > 0) ?? []
 })
 
 const activeSection = computed(() => {
@@ -46,12 +15,12 @@ const activeSection = computed(() => {
 })
 
 const leadTitle = computed(() => {
-  return daily.value?.lead?.title ?? daily.value?.sections.find((section) => section.items.length > 0)?.items[0]?.title ?? '今日 AI 热点'
+  return aihotStore.daily?.lead?.title ?? aihotStore.daily?.sections.find((section) => section.items.length > 0)?.items[0]?.title ?? '今日 AI 热点'
 })
 
 const leadParagraph = computed(() => {
-  return daily.value?.lead?.leadParagraph
-    ?? daily.value?.sections.find((section) => section.items.length > 0)?.items[0]?.summary
+  return aihotStore.daily?.lead?.leadParagraph
+    ?? aihotStore.daily?.sections.find((section) => section.items.length > 0)?.items[0]?.summary
     ?? '来自 AI HOT 的精选 AI 动态、模型发布、产品更新和行业观察。'
 })
 
@@ -65,25 +34,8 @@ const formatDay = (value: string | undefined) => {
 }
 
 const fetchAihot = async () => {
-  loading.value = true
-  errorMessage.value = ''
-
-  try {
-    const dailyResponse = await fetch('/aihot-api/daily')
-
-    if (!dailyResponse.ok) throw new Error(`日报请求失败: ${dailyResponse.status}`)
-
-    daily.value = await dailyResponse.json() as DailyReport
-  } catch (error) {
-    errorMessage.value = error instanceof Error ? error.message : 'AI HOT 数据加载失败'
-  } finally {
-    loading.value = false
-  }
+  await aihotStore.loadDaily(true)
 }
-
-onMounted(() => {
-  void fetchAihot()
-})
 
 watch(featuredSections, (sections) => {
   if (!sections.length) {
@@ -105,18 +57,18 @@ watch(featuredSections, (sections) => {
           <h1>AI 日报</h1>
         </div>
 
-        <button class="refresh-button" type="button" :disabled="loading" @click="fetchAihot">
-          <RefreshCw :class="{ spinning: loading }" :size="16" :stroke-width="2.3" />
+        <button class="refresh-button" type="button" :disabled="aihotStore.dailyLoading" @click="fetchAihot">
+          <RefreshCw :class="{ spinning: aihotStore.dailyLoading }" :size="16" :stroke-width="2.3" />
           <span>刷新</span>
         </button>
       </header>
 
-      <div v-if="errorMessage" class="state-card error-card">
+      <div v-if="aihotStore.dailyErrorMessage" class="state-card error-card">
         <AlertCircle :size="18" :stroke-width="2.3" />
-        <span>{{ errorMessage }}</span>
+        <span>{{ aihotStore.dailyErrorMessage }}</span>
       </div>
 
-      <div v-else-if="loading" class="state-card">
+      <div v-else-if="aihotStore.dailyLoading && !aihotStore.dailyLoaded" class="state-card">
         <RefreshCw class="spinning" :size="18" :stroke-width="2.3" />
         <span>正在读取 AI HOT 最新内容</span>
       </div>
@@ -125,7 +77,7 @@ watch(featuredSections, (sections) => {
         <section class="daily-card">
           <div class="daily-meta">
             <span class="daily-icon"><Newspaper :size="18" :stroke-width="2.3" /></span>
-            <span>{{ formatDay(daily?.date) }}</span>
+            <span>{{ formatDay(aihotStore.daily?.date) }}</span>
           </div>
           <h2>{{ leadTitle }}</h2>
           <p>{{ leadParagraph }}</p>

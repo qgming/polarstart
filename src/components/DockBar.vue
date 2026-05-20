@@ -2,34 +2,40 @@
 
 const links = [
   {
-    name: 'Google',
-    url: 'https://www.google.com',
+    name: 'DeepSeek',
+    url: 'https://chat.deepseek.com/',
     external: true,
-    image: 'https://www.google.com/s2/favicons?domain=www.google.com&sz=128'
+    image: 'https://image.dooo.ng/t/2026/05/20/6a0dc9f9a9131.webp'
   },
   {
     name: 'GitHub',
     url: 'https://github.com',
     external: true,
-    image: 'https://github.githubassets.com/favicons/favicon.svg'
+    image: 'https://image.dooo.ng/t/2026/05/20/6a0dc9e6b4981.webp'
   },
   {
     name: 'Bilibili',
     url: 'https://www.bilibili.com',
     external: true,
-    image: 'https://www.bilibili.com/favicon.ico'
+    image: 'https://image.dooo.ng/t/2026/05/20/6a0dc9be2dd9e.webp'
   },
   {
-    name: 'Docs',
-    url: 'https://vite.dev',
+    name: '抖音官网',
+    url: 'https://www.douyin.com/',
     external: true,
-    image: 'https://vite.dev/logo.svg'
+    image: 'https://image.dooo.ng/t/2026/05/20/6a0dca8574d35.webp'
+  },
+  {
+    name: '橘子导航',
+    url: 'https://v.qgming.com/',
+    external: true,
+    image: 'https://image.dooo.ng/t/2026/05/20/6a0dcbff031ce.webp'
   },
   {
     name: 'Linux Do',
     url: 'https://linux.do/',
     external: true,
-    image: 'https://image.dooo.ng/t/2026/05/20/6a0d9313b887b.webp'
+    image: 'https://image.dooo.ng/t/2026/05/20/6a0dcb2ba4ffc.webp'
   }
 ]
 
@@ -71,11 +77,11 @@ const openLink = (url: string, external: boolean) => {
   transform: translateX(-50%);
   border-radius: 24px;
   overflow: visible;
-  background: var(--card-bg);
+  background: color-mix(in srgb, var(--app-bg) 72%, transparent);
   border: 1px solid var(--card-border);
   box-shadow: var(--card-shadow);
-  backdrop-filter: blur(46px) saturate(1.25);
-  -webkit-backdrop-filter: blur(46px) saturate(1.25);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
 }
 
 .tabbar::after {

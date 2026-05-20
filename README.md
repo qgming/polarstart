@@ -1,27 +1,134 @@
-# PolarStart
+<p align="center">
+  <img src="./public/favicon.svg" width="88" height="88" alt="PolarStart Logo" />
+</p>
 
-一个清爽的 Vue 3 单页起始页模板，保留了三件核心能力：
+<h1 align="center">PolarStart</h1>
 
-- 大号时间与日期展示
-- 中央搜索框
-- 底部快捷 tabbar
+<p align="center">一个带搜索、壁纸、热点、IT 动态和 AI 资讯的 Vue 3 起始页。</p>
 
-这个版本刻意做了瘦身，适合作为后续继续扩展的基础项目。
+<p align="center">
+  <img alt="Vue" src="https://img.shields.io/badge/Vue-3.5-42b883?style=flat-square&logo=vuedotjs&logoColor=white" />
+  <img alt="Vite" src="https://img.shields.io/badge/Vite-8.0-646CFF?style=flat-square&logo=vite&logoColor=white" />
+  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-6.0-3178C6?style=flat-square&logo=typescript&logoColor=white" />
+  <img alt="Pinia" src="https://img.shields.io/badge/Pinia-3.0-FFD859?style=flat-square&logo=pinia&logoColor=222" />
+  <img alt="License" src="https://img.shields.io/badge/License-MIT-blue?style=flat-square" />
+</p>
 
-## 当前特性
+<p align="center">
+  <img alt="AI HOT" src="https://img.shields.io/badge/Data-AI%20HOT-59B8FF?style=flat-square" />
+  <img alt="60s API" src="https://img.shields.io/badge/Data-60s%20API-16A34A?style=flat-square" />
+  <img alt="Bing Wallpaper" src="https://img.shields.io/badge/Bing-Wallpaper-0EA5E9?style=flat-square" />
+</p>
 
-- 单页结构，没有路由、状态管理和历史业务负担
-- 使用 `@lucide/vue` 统一图标体系
-- 轻量 CSS，自带响应式布局
-- 保留 Vite + Vue + TypeScript 的开发体验
-- 首页背景支持必应壁纸异步加载
+PolarStart 现在不再只是一个简单的搜索首页，而是一个带顶部导航、多数据页面、主题切换、Bing 每日壁纸和多源内容聚合的轻量信息门户。
+
+## 预览亮点
+
+```text
+首页搜索 / Bing 壁纸 / 全网热点 / IT 动态 / AI 日报 / AI 动态
+```
+
+## 主要特性
+
+- 首页搜索体验
+  - 顶部导航栏
+  - 中央搜索框
+  - 底部快捷入口栏
+  - Bing 每日壁纸背景，可在顶部栏开关
+- 多页面信息流
+  - `首页`
+  - `全网热点`
+  - `IT 动态`
+  - `AI 日报`
+  - `AI 动态`
+- 主题与显示
+  - 浅色 / 深色模式切换
+  - Bing 壁纸开关状态持久化
+  - 统一的透明模糊磨砂风格导航与浮层
+- 数据接入
+  - AI HOT：日报与 AI 动态
+  - 60s API：全网热点、IT 动态
+  - 60s 多实例随机兜底，请求失败时自动切换其他实例
+- 状态管理
+  - 使用 Pinia 管理主题、热点、AI 内容、IT 内容状态
+  - 进入网站后会在后台预加载核心数据页
+
+## 页面说明
+
+### 首页
+
+- 搜索引擎切换搜索框
+- 底部快捷入口
+- Bing 每日壁纸背景
+
+### 全网热点
+
+聚合以下来源的热榜数据：
+
+- 微博
+- 抖音
+- 小红书
+- 知乎
+- B 站
+- 今日头条
+
+每个热榜单独加载，失败时会自动随机切换到其他 60s 实例。
+
+### IT 动态
+
+基于 60s API 的实时 IT 资讯流，当前来源为 IT 之家。
+
+### AI 日报
+
+基于 AI HOT 的日报接口，支持分类切换查看。
+
+### AI 动态
+
+基于 AI HOT 的精选动态流，采用资讯列表样式展示。
 
 ## 技术栈
 
-- Vue 3
-- TypeScript
-- Vite
-- Lucide
+| 类别 | 技术 |
+| --- | --- |
+| 框架 | Vue 3 |
+| 构建 | Vite |
+| 语言 | TypeScript |
+| 路由 | Vue Router |
+| 状态 | Pinia |
+| 图标 | Lucide Icons |
+
+## 数据来源
+
+| 数据 | 用途 | 方式 |
+| --- | --- | --- |
+| AI HOT | AI 日报、AI 动态 | `/aihot-api` Vite 代理 |
+| 60s API | 全网热点、IT 动态 | 公网实例直连 + 随机兜底 |
+| Bing 每日壁纸 | 首页背景 | `https://bing.ee123.net/img/` |
+
+### AI HOT
+
+- `https://aihot.virxact.com`
+- 通过 Vite 代理到 `/aihot-api`
+- 已按要求附带浏览器风格 `User-Agent`
+
+### 60s API
+
+直接请求公网实例，不走 Vite 代理。
+
+当前内置兜底实例：
+
+- `https://60s.viki.moe`
+- `https://60s.qgming.com`
+- `https://api.yanyua.icu`
+- `https://60s.7se.cn`
+- `https://60s.mizhoubaobei.top`
+- `https://api.cczo.cc/60s`
+
+请求策略：
+
+- 每次请求随机选择实例顺序
+- 某个实例失败时自动切换下一个
+- 全部实例失败时才向页面暴露错误
 
 ## 项目结构
 
@@ -32,21 +139,37 @@ src/
   assets/
     main.css
   components/
+    ActionMenu.vue
     DockBar.vue
     SearchBar.vue
-    TimeDisplay.vue
+    TopNav.vue
+  router/
+    index.ts
+  stores/
+    content.ts
+    theme.ts
   views/
     HomeView.vue
+    HotView.vue
+    ItNewsView.vue
+    AihotView.vue
+    AihotItemsView.vue
 ```
 
-## 开发
+## 安装与开发
 
 ```bash
 npm install
 npm run dev
 ```
 
-默认地址：`http://localhost:5173`
+默认开发服务器地址通常为：
+
+```text
+http://localhost:5173
+```
+
+如果端口被占用，Vite 会自动切换到下一个可用端口。
 
 ## 构建
 
@@ -56,22 +179,22 @@ npm run build
 npm run preview
 ```
 
-## 这次整理做了什么
+## 当前快捷入口
 
-- 移除了网站分类、About 页面和信息卡片页
-- 移除了所有小组件与相关数据
-- 移除了 `vue-router`、`pinia`、`pinia-plugin-persistedstate`
-- 移除了 Tailwind / PostCSS / Vue DevTools 插件配置
-- 移除了旧的埋点与额外站点验证脚本
-- 统一改为 Lucide 图标
+首页底部栏当前包含：
 
-## 后续适合继续加的方向
+- DeepSeek
+- GitHub
+- Bilibili
+- 抖音官网
+- 橘子导航
+- Linux Do
 
-- 搜索引擎切换
-- 自定义快捷入口
-- 主题模式切换
-- 本地设置持久化
-- 命令面板或快捷键支持
+## 说明
+
+- Bing 壁纸默认开启
+- AI HOT 页面依赖本地开发代理，修改 `vite.config.ts` 后需要重启 dev server
+- 60s API 使用公网实例直连，因此更换实例列表时不需要改 Vite 代理
 
 ## License
 
