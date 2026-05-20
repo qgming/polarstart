@@ -42,20 +42,6 @@ import SearchBar from '@/components/SearchBar.vue'
   display: none;
 }
 
-:global(:root[data-theme="dark"]) .home-backdrop {
-  background:
-    radial-gradient(circle at 18% 12%, rgba(106, 163, 255, 0.16), transparent 32%),
-    radial-gradient(circle at 82% 18%, rgba(76, 220, 196, 0.14), transparent 28%),
-    linear-gradient(180deg, #101827 0%, #09111f 70%, #070d18 100%);
-}
-
-:global(:root[data-theme="dark"]) .home-grid {
-  opacity: 0.18;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
-}
-
 .hero-layout {
   position: relative;
   z-index: 1;

@@ -78,13 +78,6 @@ const openLink = (url: string, external: boolean) => {
   -webkit-backdrop-filter: blur(46px) saturate(1.25);
 }
 
-:global(:root[data-theme="dark"]) .tabbar {
-  background:
-    radial-gradient(circle at 50% 8%, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.06) 48%, rgba(255, 255, 255, 0.03) 100%),
-    rgba(255, 255, 255, 0.1);
-  border-color: transparent;
-}
-
 .tabbar::after {
   content: '';
   position: absolute;

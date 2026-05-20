@@ -1,22 +1,8 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue'
-import { Flame, Home, Moon, Sun } from '@lucide/vue'
+import { Flame, Home, Moon, Newspaper, Sun } from '@lucide/vue'
 import { useThemeStore } from '@/stores/theme'
 
 const themeStore = useThemeStore()
-const now = ref(new Date())
-let timer: ReturnType<typeof window.setInterval> | null = null
-
-const timeText = computed(() => now.value.toLocaleTimeString('zh-CN', {
-  hour: '2-digit',
-  minute: '2-digit'
-}))
-
-const dateText = computed(() => now.value.toLocaleDateString('zh-CN', {
-  month: 'long',
-  day: 'numeric',
-  weekday: 'short'
-}))
 
 const navItems = [
   {
@@ -27,23 +13,17 @@ const navItems = [
   },
   {
     to: '/aihot',
-    name: 'aihot',
-    label: 'AI 热点',
+    name: 'aihot-daily',
+    label: 'AI 日报',
+    icon: Newspaper
+  },
+  {
+    to: '/aihot/items',
+    name: 'aihot-items',
+    label: 'AI 动态',
     icon: Flame
   }
 ]
-
-onMounted(() => {
-  timer = window.setInterval(() => {
-    now.value = new Date()
-  }, 1000)
-})
-
-onUnmounted(() => {
-  if (timer !== null) {
-    clearInterval(timer)
-  }
-})
 </script>
 
 <template>
@@ -75,11 +55,6 @@ onUnmounted(() => {
       </nav>
 
       <div class="nav-right">
-        <div class="top-clock" aria-label="当前时间">
-          <span class="top-clock-time">{{ timeText }}</span>
-          <span class="top-clock-date">{{ dateText }}</span>
-        </div>
-
         <button
           class="theme-button"
           type="button"
@@ -104,8 +79,10 @@ onUnmounted(() => {
   z-index: 20;
   min-height: calc(52px + env(safe-area-inset-top));
   padding: env(safe-area-inset-top) clamp(16px, 3vw, 28px) 0;
-  background: var(--app-bg);
+  background: color-mix(in srgb, var(--app-bg) 72%, transparent);
   border-bottom: 1px solid var(--card-border);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
   pointer-events: auto;
 }
 
@@ -118,11 +95,6 @@ onUnmounted(() => {
   gap: 16px;
   min-height: 52px;
   padding: 0;
-}
-
-:global(:root[data-theme="dark"]) .nav-inner {
-  background: transparent;
-  box-shadow: none;
 }
 
 .brand-link {
@@ -194,33 +166,6 @@ onUnmounted(() => {
   display: inline-flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 10px;
-}
-
-.top-clock {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 2px;
-  min-width: 74px;
-  user-select: none;
-}
-
-.top-clock-time {
-  font-size: 15px;
-  font-weight: 800;
-  line-height: 1;
-  color: var(--text-primary);
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: "tnum" 1;
-}
-
-.top-clock-date {
-  font-size: 11px;
-  font-weight: 600;
-  line-height: 1;
-  color: var(--text-muted);
-  white-space: nowrap;
 }
 
 .theme-button {
@@ -269,17 +214,6 @@ onUnmounted(() => {
     padding: 0 10px;
   }
 
-  .top-clock {
-    min-width: 68px;
-  }
-
-  .top-clock-time {
-    font-size: 14px;
-  }
-
-  .top-clock-date {
-    font-size: 10px;
-  }
 }
 
 @media (max-width: 520px) {
@@ -294,12 +228,5 @@ onUnmounted(() => {
     justify-content: center;
   }
 
-  .top-clock-date {
-    display: none;
-  }
-
-  .top-clock {
-    min-width: 44px;
-  }
 }
 </style>

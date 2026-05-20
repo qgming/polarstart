@@ -1,24 +1,6 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
-import { AlertCircle, ExternalLink, Newspaper, RefreshCw, Sparkles } from '@lucide/vue'
-
-type HotItem = {
-  id: string
-  title: string
-  title_en: string | null
-  url: string
-  source: string
-  publishedAt: string | null
-  summary: string | null
-  category: CategoryKey | null
-}
-
-type HotItemsResponse = {
-  count: number
-  hasNext: boolean
-  nextCursor: string | null
-  items: HotItem[]
-}
+import { computed, onMounted, ref, watch } from 'vue'
+import { AlertCircle, Newspaper, RefreshCw } from '@lucide/vue'
 
 type DailySectionItem = {
   title: string
@@ -50,29 +32,17 @@ type DailyReport = {
   }>
 }
 
-type CategoryKey = 'ai-models' | 'ai-products' | 'industry' | 'paper' | 'tip'
-
-const categoryLabels: Record<CategoryKey, string> = {
-  'ai-models': '模型',
-  'ai-products': '产品',
-  industry: '行业',
-  paper: '论文',
-  tip: '观点'
-}
-
 const daily = ref<DailyReport | null>(null)
-const hotItems = ref<HotItem[]>([])
 const loading = ref(true)
 const errorMessage = ref('')
+const activeSectionLabel = ref('')
 
 const featuredSections = computed(() => {
-  return daily.value?.sections
-    .map((section) => ({
-      ...section,
-      items: section.items.slice(0, 2)
-    }))
-    .filter((section) => section.items.length > 0)
-    .slice(0, 4) ?? []
+  return daily.value?.sections.filter((section) => section.items.length > 0) ?? []
+})
+
+const activeSection = computed(() => {
+  return featuredSections.value.find((section) => section.label === activeSectionLabel.value) ?? featuredSections.value[0]
 })
 
 const leadTitle = computed(() => {
@@ -85,16 +55,6 @@ const leadParagraph = computed(() => {
     ?? '来自 AI HOT 的精选 AI 动态、模型发布、产品更新和行业观察。'
 })
 
-const formatDate = (value: string | null) => {
-  if (!value) return '时间未知'
-  return new Intl.DateTimeFormat('zh-CN', {
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  }).format(new Date(value))
-}
-
 const formatDay = (value: string | undefined) => {
   if (!value) return '最新日报'
   return new Intl.DateTimeFormat('zh-CN', {
@@ -104,26 +64,16 @@ const formatDay = (value: string | undefined) => {
   }).format(new Date(`${value}T00:00:00Z`))
 }
 
-const categoryText = (category: CategoryKey | null) => {
-  return category ? categoryLabels[category] : '未分类'
-}
-
 const fetchAihot = async () => {
   loading.value = true
   errorMessage.value = ''
 
   try {
-    const [dailyResponse, itemsResponse] = await Promise.all([
-      fetch('https://aihot.virxact.com/api/public/daily'),
-      fetch('https://aihot.virxact.com/api/public/items?mode=selected&take=12')
-    ])
+    const dailyResponse = await fetch('/aihot-api/daily')
 
     if (!dailyResponse.ok) throw new Error(`日报请求失败: ${dailyResponse.status}`)
-    if (!itemsResponse.ok) throw new Error(`动态请求失败: ${itemsResponse.status}`)
 
     daily.value = await dailyResponse.json() as DailyReport
-    const itemsData = await itemsResponse.json() as HotItemsResponse
-    hotItems.value = itemsData.items
   } catch (error) {
     errorMessage.value = error instanceof Error ? error.message : 'AI HOT 数据加载失败'
   } finally {
@@ -134,6 +84,17 @@ const fetchAihot = async () => {
 onMounted(() => {
   void fetchAihot()
 })
+
+watch(featuredSections, (sections) => {
+  if (!sections.length) {
+    activeSectionLabel.value = ''
+    return
+  }
+
+  if (!sections.some((section) => section.label === activeSectionLabel.value)) {
+    activeSectionLabel.value = sections[0].label
+  }
+})
 </script>
 
 <template>
@@ -141,9 +102,7 @@ onMounted(() => {
     <section class="hot-layout">
       <header class="hot-hero">
         <div class="hero-copy">
-          <p class="hot-kicker">AI HOT</p>
-          <h1>AI 热点</h1>
-          <p>匿名读取 AI HOT 精选动态和每日精编日报，快速扫过模型、产品、行业、论文与观点。</p>
+          <h1>AI 日报</h1>
         </div>
 
         <button class="refresh-button" type="button" :disabled="loading" @click="fetchAihot">
@@ -172,49 +131,42 @@ onMounted(() => {
           <p>{{ leadParagraph }}</p>
         </section>
 
-        <section class="section-grid" aria-label="AI HOT 日报分类">
-          <article v-for="section in featuredSections" :key="section.label" class="section-card">
-            <div class="section-title">
-              <Sparkles :size="16" :stroke-width="2.3" />
-              <h2>{{ section.label }}</h2>
-            </div>
-            <a
-              v-for="item in section.items"
-              :key="item.sourceUrl"
-              class="daily-link"
-              :href="item.sourceUrl"
-              target="_blank"
-              rel="noopener noreferrer"
+        <section class="section-browser" aria-label="AI HOT 日报分类">
+          <div class="section-tabs" role="tablist" aria-label="日报分类">
+            <button
+              v-for="section in featuredSections"
+              :key="section.label"
+              class="section-tab"
+              :class="{ active: section.label === activeSection?.label }"
+              type="button"
+              role="tab"
+              :aria-selected="section.label === activeSection?.label"
+              @click="activeSectionLabel = section.label"
             >
-              <strong>{{ item.title }}</strong>
-              <span>{{ item.sourceName }}</span>
-            </a>
-          </article>
-        </section>
-
-        <section class="feed-section" aria-labelledby="feed-title">
-          <div class="feed-heading">
-            <h2 id="feed-title">精选动态</h2>
-            <a class="source-link" href="https://aihot.virxact.com/" target="_blank" rel="noopener noreferrer">
-              <span>打开 AI HOT</span>
-              <ExternalLink :size="15" :stroke-width="2.3" />
-            </a>
+              <span>{{ section.label }}</span>
+              <strong>{{ section.items.length }}</strong>
+            </button>
           </div>
 
-          <div class="feed-list">
-            <article v-for="item in hotItems" :key="item.id" class="feed-card">
-              <div class="feed-card-head">
-                <span class="category-pill">{{ categoryText(item.category) }}</span>
-                <time>{{ formatDate(item.publishedAt) }}</time>
-              </div>
-              <h3>{{ item.title }}</h3>
-              <p v-if="item.summary">{{ item.summary }}</p>
-              <a :href="item.url" target="_blank" rel="noopener noreferrer">
-                <span>{{ item.source }}</span>
-                <ExternalLink :size="14" :stroke-width="2.3" />
+          <article v-if="activeSection" class="section-panel">
+            <div class="daily-grid">
+              <a
+                v-for="item in activeSection.items"
+                :key="item.sourceUrl"
+                class="daily-card-link"
+                :href="item.sourceUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <div class="daily-card-head">
+                  <span class="category-pill">{{ activeSection.label }}</span>
+                </div>
+                <strong>{{ item.title }}</strong>
+                <p v-if="item.summary">{{ item.summary }}</p>
+                <span class="source-name">{{ item.sourceName }}</span>
               </a>
-            </article>
-          </div>
+            </div>
+          </article>
         </section>
       </template>
     </section>
@@ -246,34 +198,18 @@ onMounted(() => {
   max-width: 720px;
 }
 
-.hot-kicker {
-  margin: 0 0 8px;
-  color: var(--accent-text);
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-}
-
 .hot-hero h1 {
   margin: 0;
-  font-size: clamp(36px, 6vw, 68px);
-  line-height: 1;
+  font-size: clamp(28px, 4vw, 42px);
+  line-height: 1.12;
 }
 
-.hot-hero p,
 .daily-card p,
-.feed-card p {
+.daily-card-link p {
   color: var(--text-secondary);
 }
 
-.hot-hero p {
-  margin: 14px 0 0;
-  font-size: 17px;
-}
-
-.refresh-button,
-.source-link,
-.feed-card a {
+.refresh-button {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -297,9 +233,7 @@ onMounted(() => {
 }
 
 .state-card,
-.daily-card,
-.section-card,
-.feed-card {
+.daily-card {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
   border-radius: 22px;
@@ -323,10 +257,7 @@ onMounted(() => {
   padding: clamp(22px, 4vw, 34px);
 }
 
-.daily-meta,
-.section-title,
-.feed-card-head,
-.feed-heading {
+.daily-meta {
   display: flex;
   align-items: center;
 }
@@ -359,76 +290,87 @@ onMounted(() => {
   max-width: 900px;
 }
 
-.section-grid {
+.section-browser {
+  margin-top: 14px;
+}
+
+.section-tabs {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.section-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  color: var(--text-secondary);
+  background: var(--control-bg);
+  cursor: pointer;
+  font-weight: 750;
+  transition: color 180ms ease, background 180ms ease, border-color 180ms ease;
+}
+
+.section-tab:hover,
+.section-tab.active {
+  color: var(--accent-text);
+  background: var(--accent-soft);
+  border-color: var(--accent-border);
+}
+
+.section-tab strong {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 24px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--card-bg);
+  font-size: 12px;
+}
+
+.section-panel {
+  padding: 0;
+}
+
+.daily-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 14px;
   margin-top: 14px;
 }
 
-.section-card {
-  padding: 18px;
-}
-
-.section-title {
-  gap: 8px;
-  color: var(--accent-text);
-}
-
-.section-title h2,
-.feed-heading h2 {
-  margin: 0;
-  font-size: 18px;
-}
-
-.daily-link {
-  display: block;
-  margin-top: 16px;
-  color: var(--text-primary);
-  text-decoration: none;
-}
-
-.daily-link strong,
-.daily-link span {
-  display: block;
-}
-
-.daily-link strong {
-  line-height: 1.35;
-}
-
-.daily-link span {
-  margin-top: 6px;
-  color: var(--text-muted);
-  font-size: 13px;
-}
-
-.feed-section {
-  margin-top: 28px;
-}
-
-.feed-heading {
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 14px;
-}
-
-.feed-list {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
-}
-
-.feed-card {
+.daily-card-link {
   display: flex;
   flex-direction: column;
   min-height: 260px;
   padding: 18px;
+  color: var(--text-primary);
+  text-decoration: none;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 18px;
+  box-shadow: var(--card-shadow);
 }
 
-.feed-card-head {
+.daily-card-link strong,
+.daily-card-link .source-name {
+  display: block;
+}
+
+.daily-card-head {
+  display: flex;
+  align-items: center;
   justify-content: space-between;
   gap: 10px;
+  margin-bottom: 16px;
 }
 
 .category-pill {
@@ -443,30 +385,28 @@ onMounted(() => {
   font-weight: 800;
 }
 
-.feed-card time {
-  color: var(--text-muted);
-  font-size: 12px;
-  white-space: nowrap;
-}
-
-.feed-card h3 {
-  margin: 16px 0 0;
-  font-size: 18px;
+.daily-card-link strong {
   line-height: 1.35;
+  font-size: 18px;
 }
 
-.feed-card p {
-  margin: 10px 0 0;
+.daily-card-link p {
+  margin: 8px 0 0;
   display: -webkit-box;
   overflow: hidden;
   -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
+  color: var(--text-secondary);
   font-size: 14px;
 }
 
-.feed-card a {
+.daily-card-link .source-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   margin-top: auto;
   padding-top: 16px;
+  color: var(--accent-text);
   font-size: 14px;
   font-weight: 750;
 }
@@ -482,9 +422,8 @@ onMounted(() => {
 }
 
 @media (max-width: 900px) {
-  .section-grid,
-  .feed-list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .daily-grid {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   }
 }
 
@@ -498,12 +437,7 @@ onMounted(() => {
     flex-direction: column;
   }
 
-  .section-grid,
-  .feed-list {
-    grid-template-columns: 1fr;
-  }
-
-  .feed-card {
+  .daily-card-link {
     min-height: 0;
   }
 }
