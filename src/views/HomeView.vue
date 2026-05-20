@@ -1,15 +1,19 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import DockBar from '@/components/DockBar.vue'
 import SearchBar from '@/components/SearchBar.vue'
 import TimeDisplay from '@/components/TimeDisplay.vue'
 
+const router = useRouter()
 const desktopWallpaper = 'https://bing.ee123.net/img/?size=1920x1080&imgtype=webp'
 const mobileWallpaper = 'https://bing.ee123.net/img/?size=768x1280&imgtype=webp'
 const backgroundLoaded = ref(false)
 const backgroundUrl = ref(desktopWallpaper)
+const touchStartY = ref(0)
 let mobileWallpaperQuery: MediaQueryList | null = null
 let loadToken = 0
+let routeLocked = false
 
 const backgroundStyle = computed(() => ({
   backgroundImage: backgroundLoaded.value ? `url(${backgroundUrl.value})` : 'none'
@@ -44,14 +48,51 @@ const loadBackground = () => {
   image.src = nextBackgroundUrl
 }
 
+const unlockRoute = () => {
+  window.setTimeout(() => {
+    routeLocked = false
+  }, 800)
+}
+
+const goInfo = () => {
+  if (routeLocked) return
+  routeLocked = true
+  router.push({ name: 'info' })
+  unlockRoute()
+}
+
+const handleWheel = (event: WheelEvent) => {
+  if (event.deltaY > 60) {
+    event.preventDefault()
+    goInfo()
+  }
+}
+
+const handleTouchStart = (event: TouchEvent) => {
+  touchStartY.value = event.touches[0]?.clientY ?? 0
+}
+
+const handleTouchEnd = (event: TouchEvent) => {
+  const endY = event.changedTouches[0]?.clientY ?? touchStartY.value
+  if (touchStartY.value - endY > 64) {
+    goInfo()
+  }
+}
+
 onMounted(() => {
   mobileWallpaperQuery = window.matchMedia('(max-width: 768px) and (orientation: portrait)')
   mobileWallpaperQuery.addEventListener('change', loadBackground)
+  window.addEventListener('wheel', handleWheel, { passive: false })
+  window.addEventListener('touchstart', handleTouchStart, { passive: true })
+  window.addEventListener('touchend', handleTouchEnd, { passive: true })
   loadBackground()
 })
 
 onUnmounted(() => {
   mobileWallpaperQuery?.removeEventListener('change', loadBackground)
+  window.removeEventListener('wheel', handleWheel)
+  window.removeEventListener('touchstart', handleTouchStart)
+  window.removeEventListener('touchend', handleTouchEnd)
 })
 </script>
 
