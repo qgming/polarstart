@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Flame, Home, Image, Moon, Newspaper, Rss, Sun, TrendingUp } from '@lucide/vue'
+import { Flame, Home, Image, Monitor, Moon, Newspaper, Rss, Sun, TrendingUp } from '@lucide/vue'
 import { useThemeStore } from '@/stores/theme'
 
 const themeStore = useThemeStore()
@@ -42,7 +42,8 @@ const navItems = [
   <header class="top-nav">
     <div class="nav-inner">
       <RouterLink to="/" class="brand-link" aria-label="首页">
-        <img class="brand-logo" src="/favicon.svg" alt="" aria-hidden="true" />
+        <span class="brand-logo" aria-hidden="true"></span>
+        <span class="brand-name">PolarStart</span>
       </RouterLink>
 
       <nav class="nav-links" aria-label="页面导航">
@@ -82,12 +83,30 @@ const navItems = [
         <button
           class="icon-button"
           type="button"
-          :aria-label="themeStore.isDark ? '切换为浅色模式' : '切换为深色模式'"
-          :title="themeStore.isDark ? '切换为浅色模式' : '切换为深色模式'"
+          :aria-label="
+            themeStore.mode === 'light'
+              ? '当前浅色模式，切换为深色模式'
+              : themeStore.mode === 'dark'
+                ? '当前深色模式，切换为跟随系统'
+                : '当前跟随系统，切换为浅色模式'
+          "
+          :title="
+            themeStore.mode === 'light'
+              ? '浅色模式'
+              : themeStore.mode === 'dark'
+                ? '深色模式'
+                : `跟随系统（当前${themeStore.resolvedMode === 'dark' ? '深色' : '浅色'}）`
+          "
           @click="themeStore.toggleTheme"
         >
-          <Sun v-if="themeStore.isDark" :size="17" :stroke-width="2.25" aria-hidden="true" />
-          <Moon v-else :size="17" :stroke-width="2.25" aria-hidden="true" />
+          <Sun v-if="themeStore.mode === 'light'" :size="17" :stroke-width="2.25" aria-hidden="true" />
+          <Moon
+            v-else-if="themeStore.mode === 'dark'"
+            :size="17"
+            :stroke-width="2.25"
+            aria-hidden="true"
+          />
+          <Monitor v-else :size="17" :stroke-width="2.25" aria-hidden="true" />
         </button>
       </div>
     </div>
@@ -125,6 +144,7 @@ const navItems = [
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
+  gap: 9px;
   color: var(--text-primary);
   text-decoration: none;
 }
@@ -132,6 +152,19 @@ const navItems = [
 .brand-logo {
   width: 30px;
   height: 30px;
+  flex-shrink: 0;
+  background: currentColor;
+  mask: url('/favicon.svg') center / contain no-repeat;
+  -webkit-mask: url('/favicon.svg') center / contain no-repeat;
+  transition: background 180ms ease;
+}
+
+.brand-name {
+  font-size: 17px;
+  font-weight: 850;
+  line-height: 1;
+  letter-spacing: 0;
+  white-space: nowrap;
 }
 
 .nav-links {
@@ -230,11 +263,18 @@ const navItems = [
     height: 28px;
   }
 
+  .brand-name {
+    font-size: 16px;
+  }
+
   .nav-link {
     min-height: 32px;
     padding: 0 10px;
   }
 
+  .icon-button {
+    width: 34px;
+  }
 }
 
 @media (max-width: 520px) {

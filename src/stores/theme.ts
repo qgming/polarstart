@@ -1,7 +1,8 @@
 import { computed, ref, watch } from 'vue'
 import { defineStore } from 'pinia'
 
-export type ThemeMode = 'light' | 'dark'
+export type ResolvedThemeMode = 'light' | 'dark'
+export type ThemeMode = ResolvedThemeMode | 'system'
 
 const STORAGE_KEY = 'polarstart-theme'
 const WALLPAPER_STORAGE_KEY = 'polarstart-bing-wallpaper'
@@ -10,9 +11,15 @@ const getInitialTheme = (): ThemeMode => {
   if (typeof window === 'undefined') return 'light'
 
   const savedTheme = window.localStorage.getItem(STORAGE_KEY)
-  if (savedTheme === 'light' || savedTheme === 'dark') return savedTheme
+  if (savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'system') return savedTheme
 
-  return 'light'
+  return 'system'
+}
+
+const getSystemTheme = (): ResolvedThemeMode => {
+  if (typeof window === 'undefined') return 'light'
+
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
 }
 
 const getInitialWallpaperEnabled = () => {
@@ -27,15 +34,17 @@ const getInitialWallpaperEnabled = () => {
 
 export const useThemeStore = defineStore('theme', () => {
   const mode = ref<ThemeMode>(getInitialTheme())
+  const systemMode = ref<ResolvedThemeMode>(getSystemTheme())
   const bingWallpaperEnabled = ref(getInitialWallpaperEnabled())
 
-  const isDark = computed(() => mode.value === 'dark')
+  const resolvedMode = computed<ResolvedThemeMode>(() => (mode.value === 'system' ? systemMode.value : mode.value))
+  const isDark = computed(() => resolvedMode.value === 'dark')
 
 
   const applyTheme = () => {
     if (typeof document === 'undefined') return
-    document.documentElement.dataset.theme = mode.value
-    document.documentElement.style.colorScheme = mode.value
+    document.documentElement.dataset.theme = resolvedMode.value
+    document.documentElement.style.colorScheme = resolvedMode.value
   }
 
   const setTheme = (nextMode: ThemeMode) => {
@@ -43,15 +52,43 @@ export const useThemeStore = defineStore('theme', () => {
   }
 
   const toggleTheme = () => {
-    mode.value = isDark.value ? 'light' : 'dark'
+    if (mode.value === 'light') {
+      mode.value = 'dark'
+      return
+    }
+
+    if (mode.value === 'dark') {
+      mode.value = 'system'
+      return
+    }
+
+    mode.value = 'light'
   }
 
   const toggleBingWallpaper = () => {
     bingWallpaperEnabled.value = !bingWallpaperEnabled.value
   }
 
-  watch(mode, (nextMode) => {
+  if (typeof window !== 'undefined') {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    const updateSystemTheme = () => {
+      systemMode.value = mediaQuery.matches ? 'dark' : 'light'
+    }
+
+    updateSystemTheme()
+
+    if (typeof mediaQuery.addEventListener === 'function') {
+      mediaQuery.addEventListener('change', updateSystemTheme)
+    } else {
+      mediaQuery.addListener(updateSystemTheme)
+    }
+  }
+
+  watch(resolvedMode, () => {
     applyTheme()
+  }, { immediate: true })
+
+  watch(mode, (nextMode) => {
     if (typeof window !== 'undefined') {
       window.localStorage.setItem(STORAGE_KEY, nextMode)
     }
@@ -65,6 +102,8 @@ export const useThemeStore = defineStore('theme', () => {
 
   return {
     mode,
+    systemMode,
+    resolvedMode,
     bingWallpaperEnabled,
     isDark,
     setTheme,

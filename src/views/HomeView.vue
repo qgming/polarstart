@@ -9,11 +9,8 @@ const themeStore = useThemeStore()
 <template>
   <main class="home-shell" :class="{ 'wallpaper-enabled': themeStore.bingWallpaperEnabled }">
     <picture v-if="themeStore.bingWallpaperEnabled" class="home-wallpaper" aria-hidden="true">
-      <source
-        media="(max-width: 640px)"
-        srcset="https://bing.ee123.net/img/?size=768x1280&imgtype=jpg"
-      />
-      <img src="https://bing.ee123.net/img/4k" alt="" loading="eager" decoding="async" />
+      <source media="(max-width: 640px)" srcset="https://bing.ee123.net/img/?size=768x1280&imgtype=jpg" />
+      <img src="https://bing.ee123.net/img" alt="" loading="eager" decoding="async" />
     </picture>
     <div class="home-backdrop"></div>
     <div class="home-grid"></div>
